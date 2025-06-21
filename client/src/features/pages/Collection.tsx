@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import type { Product } from "../../app/models/product";
-import ProductList from "./ProductList";
+import ProductList from "../catalog/ProductList";
 
-export default function Catalog() {
+export default function Collection() {
   
     const [products, setProducts] = useState<Product[]>([]);
 
@@ -13,8 +13,9 @@ export default function Catalog() {
       }, []);
       
   return (
-    <div>
-      <ProductList products={products} />
-    </div>
+   <div className="px-4">
+         <h1 className="text-center text-3xl uppercase font-bold mb-10">Collections</h1>
+         <ProductList products={products} />
+       </div>
   )
 }
