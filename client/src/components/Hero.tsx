@@ -11,7 +11,7 @@ export default function Hero() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setIndex((prevIndex) => (prevIndex + 1) % images.length);
+      setIndex((prev) => (prev + 1) % images.length);
     }, 5000);
     return () => clearInterval(interval);
   }, [images.length]);
@@ -19,12 +19,12 @@ export default function Hero() {
   const imageUrl = images[index];
 
   return (
-    <div className="relative overflow-hidden h-[700px] border-2 border-black">
+    <div className="relative overflow-hidden h-[400px] sm:h-[600px] lg:h-[700px] w-full">
       {/* Blurred Background */}
       <img
         src={imageUrl}
         alt="Blurred background"
-        className="absolute top-0 left-0 w-full h-full object-cover filter blur-2xl opacity-50 z-0 transition-opacity duration-1000 ease-in-out"
+        className="absolute top-0 left-0 w-full h-full object-cover blur-2xl opacity-40 z-0 transition-opacity duration-1000"
       />
 
       {/* Foreground Image */}
@@ -32,7 +32,7 @@ export default function Hero() {
         <img
           src={imageUrl}
           alt="Foreground logo"
-          className="h-[620px] max-w-full transition-opacity duration-1000 ease-in-out"
+          className="max-h-[80%] max-w-full transition-opacity duration-1000"
         />
       </div>
     </div>

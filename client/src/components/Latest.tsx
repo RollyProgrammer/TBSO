@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import type { Product } from "../app/models/product";
 import ProductList from "../features/catalog/ProductList";
+import type { Product } from "../app/models/product";
+import { Link } from "react-router-dom";
 
 export default function LatestArrival() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -22,12 +23,14 @@ export default function LatestArrival() {
       </div>
 
       <div className="text-center mb-8">
-        <button className="border-2 border-black text-black font-bold px-10 py-2 hover:bg-black hover:text-white transition duration-300">
-          SEE ALL
-        </button>
+        <Link to="/latestarrival">
+          <button className="border-2 border-black text-black font-bold px-10 py-2 hover:bg-black hover:text-white transition duration-300">
+            SEE ALL
+          </button>
+        </Link>
       </div>
-      
-      <div>
+
+      <div className="w-full mx-auto">
         <ProductList products={products.slice(0, 5)} />
       </div>
     </div>

@@ -3,7 +3,7 @@ import type { Product } from "../app/models/product";
 import ProductList from "../features/catalog/ProductList";
 import { Link } from "react-router-dom";
 
-export default function BestSeller() {
+export default function Best() {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
@@ -13,26 +13,25 @@ export default function BestSeller() {
   }, []);
 
   return (
-    <div className="px-4 py-8">
+    <section className="px-4 sm:px-6 lg:px-12 py-8 w-full">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold mb-2">Best Sellers</h1>
-        <p className="text-gray-600 max-w-2xl mx-auto">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2">Best Sellers</h1>
+        <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.
         </p>
       </div>
 
       <div className="text-center mb-8">
         <Link to="/bestseller">
-          <button className="border-2 border-black text-black font-bold px-10 py-2 hover:bg-black hover:text-white transition duration-300">
+          <button className="border-2 border-black text-black font-bold px-6 sm:px-10 py-2 hover:bg-black hover:text-white transition">
             SEE ALL
           </button>
         </Link>
       </div>
 
-      <div>
+      <div className="w-full mx-auto">
         <ProductList products={products.slice(0, 3)} />
       </div>
-    </div>
+    </section>
   );
 }

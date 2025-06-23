@@ -1,7 +1,8 @@
-import { NavLink } from "react-router-dom";
-import { Search, ShoppingCart } from "@mui/icons-material";
+import { useState } from "react";
+import { Link, NavLink } from "react-router-dom";
+import { Menu, Close, Search, ShoppingCart } from "@mui/icons-material";
 
-// Sample data
+// Navigation Links
 const brandLink = { title: "The Bluesky Online", path: "/" };
 
 const midLinks = [
@@ -16,12 +17,7 @@ const rightLinks = [
   { title: "Sign Up", path: "/signup" },
 ];
 
-type Props = {
-  toggleDarkMode: () => void;
-  darkMode: boolean;
-  cartItemCount?: number;
-};
-
+// Reusable Nav Item Component
 function NavItem({ title, path }: { title: string; path: string }) {
   return (
     <NavLink
@@ -37,19 +33,21 @@ function NavItem({ title, path }: { title: string; path: string }) {
   );
 }
 
-export default function NavBar({ cartItemCount = 44 }: Props) {
+export default function NavBar({ cartItemCount = 5 }) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white text-black shadow px-6 py-3">
-      <div className="flex justify-between items-center gap-4 max-w-screen-xl mx-auto">
+    <nav className="fixed top-[92px] sm:top-8 left-0 right-0 z-40 bg-white shadow py-3">
+      <div className="max-w-[1800px] mx-auto flex justify-between items-center px-2 sm:px-20 md:px-40">
         {/* Brand */}
-        <div className="text-xl font-bold whitespace-nowrap">
+        <div className="text-xl font-bold whitespace-nowrap mr-0 sm:mr-[215px] md:mr-0">
           <NavLink to={brandLink.path} className="text-black no-underline">
             {brandLink.title}
           </NavLink>
         </div>
 
-        {/* Mid Links */}
-        <div className="hidden md:flex gap-4 overflow-x-auto whitespace-nowrap">
+        {/* Middle Links (Desktop Only) */}
+        <div className="hidden md:flex gap-4">
           {midLinks.map((link) => (
             <NavItem key={link.path} {...link} />
           ))}
@@ -57,8 +55,8 @@ export default function NavBar({ cartItemCount = 44 }: Props) {
 
         {/* Right Section */}
         <div className="flex items-center gap-4">
-          {/* Search */}
-          <div className="hidden sm:flex items-center border border-gray-300 rounded px-2 py-1 bg-gray-100">
+          {/* Search Bar (Visible only on small screens but hidden on tablets) */}
+          <div className="hidden sm:flex md:hidden items-center border border-gray-300 rounded px-2 py-1 bg-gray-100">
             <Search fontSize="small" className="text-gray-600 mr-2" />
             <input
               type="text"
@@ -67,22 +65,43 @@ export default function NavBar({ cartItemCount = 44 }: Props) {
             />
           </div>
 
-          {/* Cart */}
-          <div className="relative">
-            <ShoppingCart className="text-gray-800" />
-            <span className="absolute -top-2 -right-2 text-xs bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
-              {cartItemCount}
-            </span>
-          </div>
+          {/* Cart Icon */}
+          <Link to="/cart">
+            <div className="relative cursor-pointer">
+              <ShoppingCart className="text-gray-800" />
+              <span className="absolute -top-2 -right-2 text-xs bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
+                {cartItemCount}
+              </span>
+            </div>
+          </Link>
 
-          {/* Right Links */}
-          <div className="hidden md:flex gap-4 overflow-x-auto whitespace-nowrap">
+          {/* Right Links (Desktop Only) */}
+          <div className="hidden md:flex gap-4">
             {rightLinks.map((link) => (
               <NavItem key={link.path} {...link} />
             ))}
           </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <Close /> : <Menu />}
+          </button>
         </div>
       </div>
+
+      {/* Mobile Navigation Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden mt-2 border-t border-gray-300 pt-3 px-4 space-y-3 bg-white">
+          {[...midLinks, ...rightLinks].map((link) => (
+            <div key={link.path}>
+              <NavItem {...link} />
+            </div>
+          ))}
+        </div>
+      )}
     </nav>
   );
 }

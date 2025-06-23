@@ -1,18 +1,21 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "../../layout/App";
-import HomePage from "../../features/home/HomePage";
-import BestSeller from "../../features/pages/BestSeller";
-import NewItems from "../../features/pages/NewItems";
-import SignUp from "../../features/pages/SignUp";
-import Login from "../../features/pages/Login";
+import HomePage from "../../features/home/Home";
 import Catalog from "../../features/catalog/Catalog";
 import ProductDetails from "../../features/catalog/ProductDetails";
-import Collection from "../../features/pages/Collection";
-import Explore from "../../features/pages/Explore";
 import ProductCard from "../../features/catalog/ProductCard";
 import ProductList from "../../features/catalog/ProductList";
-import Best from "../../components/Best";
 import AboutPage from "../../features/about/AboutPage";
+import NewItems from "../../pages/NewItems";
+import LatestArrival from "../../pages/LatestArrival";
+import Best from "../../components/Best";
+import BestSeller from "../../pages/BestSeller";
+import Products from "../../pages/Products";
+import Collection from "../../pages/Collection";
+import Explore from "../../pages/Explore";
+import Cart from "../../pages/Cart";
+import Login from "../../pages/Login";
+import SignUp from "../../pages/SignUp";
 
 export const router = createBrowserRouter([
   {
@@ -23,12 +26,15 @@ export const router = createBrowserRouter([
       { path: "new", element: <NewItems /> },
       { path: "best", element: <Best /> },
       { path: "bestseller", element: <BestSeller /> },
+      { path: "latestarrival", element: <LatestArrival /> },
+      { path: "products", element: <Products /> },
       { path: "collection", element: <Collection /> },
       { path: "explore", element: <Explore /> },
       { path: "aboutpage", element: <AboutPage /> },
       { path: "catalog", element: <Catalog /> },
       { path: "productdetails", element: <ProductDetails /> },
       { path: "productlist", element: <ProductList products={[]} /> },
+      { path: "cart", element: <Cart /> },
       { path: "login", element: <Login /> },
       { path: "signup", element: <SignUp /> },
 

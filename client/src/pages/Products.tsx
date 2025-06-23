@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import type { Product } from "../../app/models/product";
-import ProductList from "../catalog/ProductList";
+import type { Product } from "../app/models/product";
+import ProductList from "../features/catalog/ProductList";
 
-export default function BestSeller() {
+export default function LatestArrival() {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
@@ -13,7 +13,9 @@ export default function BestSeller() {
 
   return (
     <div className="px-4">
-      <h1 className="text-center text-3xl uppercase font-bold mb-10">New Items</h1>
+      <h1 className="text-center text-3xl uppercase font-bold mb-10">
+        Products
+      </h1>
       <ProductList products={products} />
     </div>
   );

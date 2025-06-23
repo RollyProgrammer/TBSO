@@ -1,14 +1,14 @@
 import Hero from "../../components/Hero";
-import LatestArrival from "../../components/LatestArrival";
 import OurProducts from "../../components/OurProducts";
 import Best from "../../components/Best";
+import Latest from "../../components/Latest";
 
 const HomePage = () => {
   return (
-    <div>
+     <div>
       <Hero />
       <Best />
-      <LatestArrival />
+      <Latest />
       <OurProducts />
     </div>
   );
