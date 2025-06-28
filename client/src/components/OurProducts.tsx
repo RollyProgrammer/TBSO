@@ -23,7 +23,7 @@ export default function OurProducts() {
       </div>
 
       <div className="text-center mb-8">
-        <Link to="/products">
+        <Link to="/catalog">
           <button className="border-2 border-black text-black font-bold px-6 sm:px-10 py-2 hover:bg-black hover:text-white transition">
             SEE ALL
           </button>

@@ -1,148 +1,167 @@
-import { useEffect, useState } from "react";
-import type { Product } from "../app/models/product";
+import { useState } from "react";
 import ProductList from "../features/catalog/ProductList";
+import { useFetchProductsQuery } from "../features/catalog/catalogApi";
 
 export default function Collection() {
-  const [products, setProducts] = useState<Product[]>([]);
   const [selectedSort, setSelectedSort] = useState("latest");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedAvailability, setSelectedAvailability] = useState<string[]>([]);
+  const [selectedAvailability, setSelectedAvailability] = useState<string[]>(
+    []
+  );
 
-  useEffect(() => {
-    fetch("https://localhost:5001/api/products")
-      .then((res) => res.json())
-      .then((data) => setProducts(data))
-      .catch((err) => console.error("Failed to fetch products:", err));
-  }, []);
+  const { data: fetchedProducts, isLoading } = useFetchProductsQuery();
+
+  if (isLoading || !fetchedProducts)
+    return (
+      <div className="flex justify-center items-center min-h-[60vh] text-gray-600 text-sm sm:text-base">
+        Loading Collections Page...
+      </div>
+    );
 
   const filters = {
-    categories: ["Category 1", "Category 2", "Category 3"],
+    categories: Array.from(new Set((fetchedProducts ?? []).map((p) => p.type))),
     availability: ["In Stock", "Out of Stock"],
-    sizes: ["XS", "S", "M", "L", "XL"],
   };
 
-  const handleClearFilters = () => {
+  const clearFilters = () => {
     setSelectedSort("latest");
     setSelectedCategories([]);
     setSelectedAvailability([]);
   };
 
-  const handleCheckboxChange = (
+  const toggleSelection = (
     value: string,
-    selectedList: string[],
+    selected: string[],
     setSelected: (val: string[]) => void
   ) => {
-    if (selectedList.includes(value)) {
-      setSelected(selectedList.filter((item) => item !== value));
-    } else {
-      setSelected([...selectedList, value]);
-    }
+    setSelected(
+      selected.includes(value)
+        ? selected.filter((item) => item !== value)
+        : [...selected, value]
+    );
   };
 
+  const filteredProducts = (fetchedProducts ?? [])
+    .filter((product) => {
+      if (
+        selectedCategories.length > 0 &&
+        !selectedCategories.includes(product.type)
+      ) {
+        return false;
+      }
+
+      const availabilityLabel =
+        product.quantityInStock > 0 ? "In Stock" : "Out of Stock";
+      if (
+        selectedAvailability.length > 0 &&
+        !selectedAvailability.includes(availabilityLabel)
+      ) {
+        return false;
+      }
+
+      return true;
+    })
+    .sort((a, b) => {
+      switch (selectedSort) {
+        case "price-low":
+          return a.price - b.price;
+        case "price-high":
+          return b.price - a.price;
+        case "a-z":
+          return a.name.localeCompare(b.name);
+        case "z-a":
+          return b.name.localeCompare(a.name);
+        case "latest":
+        default:
+          return 0; // placeholder sort if no createdAt
+      }
+    });
+
   return (
-    <section className="py-10 sm:py-6">
+    <section className="py-15 sm:py-6">
       {/* Header */}
       <div className="container mx-auto flex flex-wrap justify-between items-center gap-4 mb-6 px-4 sm:px-6 md:px-10">
         <h2 className="text-3xl font-semibold">Collections</h2>
-
-        {/* Sort Dropdown */}
-        <div className="relative">
-          <label htmlFor="sort" className="sr-only">
-            Sort By
-          </label>
-          <select
-            id="sort"
-            name="sort"
-            value={selectedSort}
-            onChange={(e) => setSelectedSort(e.target.value)}
-            className="border border-gray-300 px-1 py-2 text-sm rounded focus:outline-none focus:ring-1 focus:ring-gray-500"
-          >
-            <option value="latest">Latest</option>
-            <option value="price-low">Price: Low to High</option>
-            <option value="price-high">Price: High to Low</option>
-            <option value="a-z">Alphabetical A-Z</option>
-            <option value="z-a">Alphabetical Z-A</option>
-          </select>
-        </div>
+        <select
+          value={selectedSort}
+          onChange={(e) => setSelectedSort(e.target.value)}
+          className="border border-gray-300 px-2 py-2 text-sm rounded focus:ring-1 focus:ring-gray-500"
+        >
+          <option value="latest">Latest</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="price-high">Price: High to Low</option>
+          <option value="a-z">Alphabetical A-Z</option>
+          <option value="z-a">Alphabetical Z-A</option>
+        </select>
       </div>
 
-      {/* Main Layout */}
+      {/* Main Content */}
       <div className="container mx-auto flex flex-col lg:flex-row gap-8 px-4 sm:px-6 md:px-10">
-        {/* Filters */}
-        <aside className="w-full lg:w-1/8 space-y-6">
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-xl">Filters</h3>
-              <button
-                className="text-sm text-gray-600 hover:underline"
-                onClick={handleClearFilters}
-              >
-                Clear Filters
-              </button>
-            </div>
-            <div className="flex items-center gap-3 flex-wrap">
-              {filters.sizes.map((size, index) => (
-                <div
-                  key={index}
-                  className="w-10 h-10 bg-gray-300 hover:bg-gray-400 cursor-pointer rounded flex items-center justify-center text-xs font-medium"
-                  title={`Size ${size}`}
-                >
-                  {size}
-                </div>
-              ))}
-            </div>
+        {/* Sidebar Filters */}
+        <aside className="w-1/6 space-y-6">
+          {/* Filter Header */}
+          <div className="flex justify-between mb-3">
+            <h3 className="text-xl font-semibold">Filters</h3>
+            <button
+              className="text-sm text-gray-600 hover:underline"
+              onClick={clearFilters}
+            >
+              Clear
+            </button>
           </div>
 
-          {/* Categories */}
+          {/* Category Filter */}
           <div>
-            <h3 className="font-semibold text-lg mb-2">Categories</h3>
+            <h3 className="text-lg font-semibold mb-2">Categories</h3>
             <div className="space-y-2 text-sm">
-              {filters.categories.map((cat, idx) => (
-                <div key={idx}>
+              {filters.categories.map((cat) => (
+                <label key={cat} className="flex items-center">
                   <input
                     type="checkbox"
-                    id={`cat-${idx}`}
-                    className="mr-2"
                     checked={selectedCategories.includes(cat)}
                     onChange={() =>
-                      handleCheckboxChange(cat, selectedCategories, setSelectedCategories)
+                      toggleSelection(
+                        cat,
+                        selectedCategories,
+                        setSelectedCategories
+                      )
                     }
+                    className="mr-2 accent-black"
                   />
-                  <label htmlFor={`cat-${idx}`}>{cat}</label>
-                </div>
+                  {cat}
+                </label>
               ))}
             </div>
           </div>
 
-          {/* Availability */}
+          {/* Availability Filter */}
           <div>
-            <h3 className="font-semibold text-lg mb-2">Availability</h3>
+            <h3 className="text-lg font-semibold mb-2">Availability</h3>
             <div className="space-y-2 text-sm">
-              {filters.availability.map((status, idx) => (
-                <div key={idx}>
+              {filters.availability.map((status) => (
+                <label key={status} className="flex items-center">
                   <input
                     type="checkbox"
-                    id={`avail-${idx}`}
-                    className="mr-2"
                     checked={selectedAvailability.includes(status)}
                     onChange={() =>
-                      handleCheckboxChange(
+                      toggleSelection(
                         status,
                         selectedAvailability,
                         setSelectedAvailability
                       )
                     }
+                    className="mr-2 accent-black"
                   />
-                  <label htmlFor={`avail-${idx}`}>{status}</label>
-                </div>
+                  {status}
+                </label>
               ))}
             </div>
           </div>
         </aside>
 
-        {/* Products */}
+        {/* Product Grid */}
         <div className="w-full">
-          <ProductList products={products} />
+          <ProductList products={filteredProducts} />
         </div>
       </div>
     </section>

@@ -16,6 +16,7 @@ import Explore from "../../pages/Explore";
 import Cart from "../../pages/Cart";
 import Login from "../../pages/Login";
 import SignUp from "../../pages/SignUp";
+import ContactPage from "../../features/contact/ContactPage";
 
 export const router = createBrowserRouter([
   {
@@ -27,12 +28,14 @@ export const router = createBrowserRouter([
       { path: "best", element: <Best /> },
       { path: "bestseller", element: <BestSeller /> },
       { path: "latestarrival", element: <LatestArrival /> },
-      { path: "products", element: <Products /> },
+      { path: "productdetails", element: <ProductDetails /> },
       { path: "collection", element: <Collection /> },
       { path: "explore", element: <Explore /> },
       { path: "aboutpage", element: <AboutPage /> },
+      { path: "contactpage", element: <ContactPage /> },
       { path: "catalog", element: <Catalog /> },
-      { path: "productdetails", element: <ProductDetails /> },
+      { path: "catalog/:id", element: <ProductDetails /> },
+      { path: "catalog", element: <Products /> },
       { path: "productlist", element: <ProductList products={[]} /> },
       { path: "cart", element: <Cart /> },
       { path: "login", element: <Login /> },

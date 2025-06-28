@@ -15,7 +15,7 @@ const SignUp = () => {
   };
 
   return (
-    <section className="w-full px-4 sm:px-6 lg:px-12 py-12">
+    <section className="w-full px-4 sm:px-6 lg:px-12 py-15">
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12">
         {/* Image Section */}
         <div className="w-full lg:w-1/2">
@@ -28,7 +28,7 @@ const SignUp = () => {
 
         {/* Signup Form Section */}
         <div className="w-full lg:w-1/2 text-left">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl uppercase font-bold mb-8 sm:mb-3">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl uppercase font-bold mb-4 sm:mb-5">
             Sign Up
           </h1>
           <p className="text-xl mb-5 text-gray-600">Sign up with</p>

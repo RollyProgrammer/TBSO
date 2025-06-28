@@ -14,9 +14,9 @@ export default function LatestArrival() {
   return (
     <div className="px-4">
       <h1 className="text-center text-3xl uppercase font-bold mb-10">
-        Latest Arrivals
+        Products
       </h1>
-      <ProductList products={products} />
+      <ProductList products={products}/>
     </div>
   );
 }

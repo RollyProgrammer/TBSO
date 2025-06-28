@@ -12,7 +12,7 @@ const Login = () => {
   };
 
   return (
-    <section className="w-full px-4 sm:px-6 lg:px-12 py-12">
+    <section className="w-full px-4 sm:px-6 lg:px-12 py-15">
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12">
         {/* Image Section */}
         <div className="w-full lg:w-1/2">
@@ -25,7 +25,7 @@ const Login = () => {
 
         {/* Login Text + Form */}
         <div className="w-full lg:w-1/2 text-start">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl uppercase font-bold mb-8 sm:mb-10">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl uppercase font-bold mb-4 sm:mb-5">
             Log in
           </h1>
 

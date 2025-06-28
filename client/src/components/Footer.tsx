@@ -1,4 +1,5 @@
 import React from "react";
+import { NavLink } from "react-router-dom";
 
 const Footer = () => {
   const year = new Date().getFullYear();
@@ -42,10 +43,10 @@ const Footer = () => {
           <div>
             <p className="text-xl font-medium mb-5">COMPANY</p>
             <ul className="flex flex-col gap-1 text-gray-600">
-              <li>Home</li>
-              <li>About Us</li>
-              <li>Delivery</li>
-              <li>Privacy Policy</li>
+              <NavLink to="/" className='hover:text-gray-900 transition hover:font-semibold'>Home</NavLink>
+              <NavLink to="aboutpage" className='hover:text-gray-900 transition hover:font-semibold'>About Us</NavLink>
+              <NavLink to="/" className='hover:text-gray-900 transition hover:font-semibold'>Delivery</NavLink>
+              <NavLink to="/" className='hover:text-gray-900 transition hover:font-semibold'>Privacy Policy</NavLink>
             </ul>
           </div>
 
@@ -56,7 +57,16 @@ const Footer = () => {
               <li>+63 (02) 2418501 to 04</li>
               <li>+63 (02) 2413846</li>
               <li>+63 (02) 2410621</li>
-              <li>bluesky@bluesky.com.ph</li>
+              <li>
+                <a
+                  href="http://www.bluesky.com.ph/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-blue-600 transition hover:font-semibold"
+                >
+                  www.bluesky.com.ph
+                </a>
+              </li>
             </ul>
           </div>
         </div>

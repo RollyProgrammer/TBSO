@@ -1,9 +1,20 @@
 import { ArrowBack, ShoppingCart } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
   const onSubmitHandler = (event: React.FormEvent) => {
     event.preventDefault();
     // Add coupon logic here
+  };
+  const navigate = useNavigate();
+
+  const handleContinueShopping = () => {
+    // If there's history, go back, otherwise fallback to /collection
+    if (window.history.length > 2) {
+      navigate(-1);
+    } else {
+      navigate("/collection");
+    }
   };
 
   return (
@@ -15,7 +26,10 @@ const Cart = () => {
             <h1 className="text-3xl font-bold uppercase mb-3">Your Cart</h1>
             <p className="text-sm sm:text-base text-gray-600">
               Not ready to checkout?{" "}
-              <span className="text-blue-300 cursor-pointer hover:underline">
+              <span
+                className="text-blue-300 cursor-pointer hover:underline"
+                onClick={handleContinueShopping}
+              >
                 Continue Shopping
               </span>
             </p>
@@ -57,7 +71,7 @@ const Cart = () => {
               </button>
             </form>
             <div className="mt-4 text-center lg:text-left">
-              <p className="text-sm text-grey-600 hover:underline cursor-pointer inline-flex items-center gap-1 transition">
+              <p className="text-sm text-grey-600 hover:underline cursor-pointer inline-flex items-center gap-1 transition" onClick={handleContinueShopping}>
                 <ArrowBack fontSize="small" />
                 Back to Shopping
               </p>
