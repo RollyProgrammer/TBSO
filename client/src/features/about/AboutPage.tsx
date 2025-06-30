@@ -5,6 +5,10 @@ import {
   Typography,
   ButtonGroup,
   Button,
+  Alert,
+  AlertTitle,
+  List,
+  ListItem,
 } from "@mui/material";
 import {
   useLazyGet400ErrorQuery,
@@ -13,14 +17,32 @@ import {
   useLazyGet500ErrorQuery,
   useLazyGetValidationErrorQuery,
 } from "./errorApi";
+import { useState } from "react";
 
 export default function AboutPage() {
+  const [validationError, setValidationError] = useState<string[]>([]);
+
   const [trigger400Error] = useLazyGet400ErrorQuery();
   const [trigger401Error] = useLazyGet401ErrorQuery();
   const [trigger404Error] = useLazyGet404ErrorQuery();
   const [trigger500Error] = useLazyGet500ErrorQuery();
   const [triggerValidationError] = useLazyGetValidationErrorQuery();
 
+  const getValidationError = async () => {
+    try {
+      await triggerValidationError().unwrap();
+    } catch (error: unknown) {
+      if (
+        error &&
+        typeof error === "object" &&
+        "message" in error &&
+        typeof (error as { message: unknown }).message === "string"
+      ) {
+        const errorArray = (error as { message: string }).message.split(",");
+        setValidationError(errorArray);
+      }
+    }
+  };
   // const [isLoading, setIsLoading] = useState(true);
 
   // useEffect(() => {
@@ -99,15 +121,20 @@ export default function AboutPage() {
         >
           Test 500 Error
         </Button>
-        <Button
-          variant="contained"
-          onClick={() =>
-            triggerValidationError().unwrap().catch((err) => console.log(err))
-          }
-        >
+        <Button variant="contained" onClick={getValidationError}>
           Test Validation Error
         </Button>
       </ButtonGroup>
+      {validationError.length > 0 && (
+        <Alert severity="error">
+          <AlertTitle>Validation Errors</AlertTitle>
+          <List>
+            {validationError.map((err) => (
+              <ListItem key={err}>{err}</ListItem>
+            ))}
+          </List>
+        </Alert>
+      )}
     </Container>
   );
 }

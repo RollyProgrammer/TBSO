@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import App from "../../layout/App";
 import HomePage from "../../features/home/Home";
 import Catalog from "../../features/catalog/Catalog";
@@ -17,6 +17,8 @@ import Cart from "../../pages/Cart";
 import Login from "../../pages/Login";
 import SignUp from "../../pages/SignUp";
 import ContactPage from "../../features/contact/ContactPage";
+import ServerError from "../errors/ServerError";
+import NotFound from "../errors/NotFound";
 
 export const router = createBrowserRouter([
   {
@@ -33,6 +35,8 @@ export const router = createBrowserRouter([
       { path: "explore", element: <Explore /> },
       { path: "aboutpage", element: <AboutPage /> },
       { path: "contactpage", element: <ContactPage /> },
+      { path: "server-error", element: <ServerError /> },
+      { path: "not-found", element: <NotFound /> },
       { path: "catalog", element: <Catalog /> },
       { path: "catalog/:id", element: <ProductDetails /> },
       { path: "catalog", element: <Products /> },
@@ -40,6 +44,7 @@ export const router = createBrowserRouter([
       { path: "cart", element: <Cart /> },
       { path: "login", element: <Login /> },
       { path: "signup", element: <SignUp /> },
+      { path: "/*", element: <Navigate replace to="/not-found" /> },
 
       // Example route for demo ProductCard (optional)
       {
