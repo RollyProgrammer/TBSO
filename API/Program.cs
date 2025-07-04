@@ -17,11 +17,12 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseMiddleware<ExceptionMiddleware>();
-app.UseCors( opt =>
+app.UseCors(opt =>
 {
-    opt.AllowAnyHeader();
-    opt.AllowAnyMethod();
-    opt.WithOrigins("https://localhost:3000");
+    opt.AllowAnyHeader().
+    AllowAnyMethod().
+    AllowCredentials().
+    WithOrigins("https://localhost:3000");
 });
 
 app.MapControllers();

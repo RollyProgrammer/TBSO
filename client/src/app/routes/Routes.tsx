@@ -19,6 +19,7 @@ import SignUp from "../../pages/SignUp";
 import ContactPage from "../../features/contact/ContactPage";
 import ServerError from "../errors/ServerError";
 import NotFound from "../errors/NotFound";
+import CheckoutPage from "../../features/checkout/CheckoutPage";
 
 export const router = createBrowserRouter([
   {
@@ -35,11 +36,12 @@ export const router = createBrowserRouter([
       { path: "explore", element: <Explore /> },
       { path: "aboutpage", element: <AboutPage /> },
       { path: "contactpage", element: <ContactPage /> },
+      { path: "checkout", element: <CheckoutPage /> },
       { path: "server-error", element: <ServerError /> },
       { path: "not-found", element: <NotFound /> },
       { path: "catalog", element: <Catalog /> },
-      { path: "catalog/:id", element: <ProductDetails /> },
-      { path: "catalog", element: <Products /> },
+      // { path: "catalog/:id", element: <ProductDetails /> },
+      { path: "catalog/:id", element: <Products /> },
       { path: "productlist", element: <ProductList products={[]} /> },
       { path: "cart", element: <Cart /> },
       { path: "login", element: <Login /> },

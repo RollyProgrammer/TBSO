@@ -1,21 +1,33 @@
+import { useState, type ChangeEvent } from "react";
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
 import {
   ShoppingCartCheckout,
   AddShoppingCart,
   StarBorder,
   Share,
 } from "@mui/icons-material";
-import type { Product } from "../app/models/product";
 import RelatedProducts from "../components/RelatedProducts";
+import { currencyFormat } from "../lib/util";
+import { useFetchProductDetailsQuery } from "../features/catalog/catalogApi";
+import { useAddbasketItemMutation } from "../features/basket/basketApi";
 
-export default function ProductDetails() {
+export default function Products() {
   const { id } = useParams();
-  const [product, setProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [openSections, setOpenSections] = useState<number[]>([]);
+  const [addBasketItem] = useAddbasketItemMutation();
   const sizes = ["S", "M", "L", "XL"];
+  const { data: product, isLoading } = useFetchProductDetailsQuery(
+    id ? +id : 0
+  );
+
+  if (!product || isLoading)
+    return (
+      <div className="flex justify-center items-center min-h-[60vh] text-gray-600 text-sm sm:text-base">
+        Loading Product Details...
+      </div>
+    );
   const sections = [
     {
       title: "Shipping & Return",
@@ -29,16 +41,9 @@ export default function ProductDetails() {
     },
   ];
 
-  useEffect(() => {
-    fetch(`https://localhost:5001/api/products/${id}`)
-      .then((res) => res.json())
-      .then(setProduct)
-      .catch((err) => console.error("Failed to fetch product", err));
-  }, [id]);
-
-  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value, 10);
-    setQuantity(!isNaN(value) && value > 0 ? value : 1);
+  const handleQuantityChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(event.target.value);
+    setQuantity(isNaN(value) || value < 1 ? 1 : value);
   };
 
   const handleSizeSelect = (size: string) => setSelectedSize(size);
@@ -95,6 +100,7 @@ export default function ProductDetails() {
               >
                 {product.name}
               </h1>
+
               <div className="flex items-center gap-4 text-gray-600">
                 <button
                   onClick={() => console.log("Add to favorites")}
@@ -104,6 +110,7 @@ export default function ProductDetails() {
                   <StarBorder />
                   <span className="text-sm">Favorite</span>
                 </button>
+
                 <button
                   onClick={() => {
                     navigator.clipboard.writeText(window.location.href);
@@ -120,11 +127,7 @@ export default function ProductDetails() {
 
             {/* Price */}
             <p className="text-xl font-semibold text-gray-700">
-              ₱
-              {(+product.price).toLocaleString("en-PH", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}
+              {currencyFormat(product.price)}
             </p>
 
             {/* Description */}
@@ -161,8 +164,8 @@ export default function ProductDetails() {
               <div className="w-1/2 sm:w-1/4 flex items-center border overflow-hidden">
                 <input
                   type="number"
-                  min={1}
                   value={quantity}
+                  min={1}
                   onChange={handleQuantityChange}
                   className="w-full text-center outline-none py-1.5"
                 />
@@ -172,7 +175,8 @@ export default function ProductDetails() {
             {/* Add to Cart Button */}
             <button
               className="w-full bg-black text-white py-3 text-sm hover:bg-gray-800 transition flex items-center justify-center gap-2 mb-2"
-              disabled={!selectedSize}
+              disabled={!selectedSize || isLoading}
+              onClick={() => addBasketItem({ product, quantity })}
             >
               <AddShoppingCart />
               ADD TO CART
@@ -181,21 +185,17 @@ export default function ProductDetails() {
             {/* Buy Now Button */}
             <button
               className="w-full bg-black text-white py-3 text-sm hover:bg-gray-800 transition flex items-center justify-center gap-2 mb-5"
-              disabled={!selectedSize}
+              disabled={!selectedSize || isLoading}
             >
               <ShoppingCartCheckout />
-              {/* BUY NOW - ${(+product.price / 100).toFixed(2)} */}
-              BUY NOW - ₱
-              {(+product.price).toLocaleString("en-PH", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}
+              BUY NOW - {currencyFormat(product.price)}
             </button>
 
             {/* Expandable Sections */}
             <div className="border border-l-0 border-r-0 divide-y">
               {sections.map((section, index) => {
                 const isOpen = openSections.includes(index);
+
                 return (
                   <div key={index}>
                     <button
@@ -206,6 +206,7 @@ export default function ProductDetails() {
                     >
                       {section.title}
                     </button>
+
                     {isOpen && (
                       <div className="px-4 py-3 text-gray-700 text-sm bg-white">
                         {section.content}

@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import RelatedProducts from "../../components/RelatedProducts";
 import { useFetchProductDetailsQuery } from "./catalogApi";
+import { currencyFormat } from "../../lib/util";
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -47,7 +48,7 @@ export default function ProductDetails() {
       <Grid size={6}>
         <Typography variant="h3">{product.name}</Typography>
         <Divider sx={{ mb: 2 }} />
-        <Typography>${(product.price / 100).toFixed(2)}</Typography>
+        <Typography>{currencyFormat(product.price)}</Typography>
         <TableContainer>
           <Table sx={{ "& td": { fontSize: "1rem" } }}>
             <TableBody>

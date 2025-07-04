@@ -8,6 +8,7 @@ import {
   AccountCircle,
 } from "@mui/icons-material";
 import { brandLink, midLinks, rightLinks } from "../constants/navLinks";
+import { useFetchBasketQuery } from "../features/basket/basketApi";
 
 const isLoggedIn = false;
 
@@ -32,8 +33,11 @@ function NavItem({ title, path }: { title: string; path: string }) {
   );
 }
 
-export default function NavBar({ cartItemCount = 5 }) {
+export default function NavBar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // Toggle mobile menu
+  const { data: basket } = useFetchBasketQuery();
+
+  const itemCount = basket?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
   return (
     <nav className="fixed top-[92px] sm:top-9 left-0 right-0 z-40 bg-white shadow py-3">
@@ -71,7 +75,7 @@ export default function NavBar({ cartItemCount = 5 }) {
           <Link to="/cart" className="relative cursor-pointer">
             <ShoppingCart className="text-gray-800" />
             <span className="absolute -top-2 -right-2 text-xs bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
-              {cartItemCount}
+              {itemCount}
             </span>
           </Link>
 

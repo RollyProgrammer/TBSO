@@ -20,7 +20,7 @@ const SignUp = () => {
         {/* Image Section */}
         <div className="w-full lg:w-1/2">
           <img
-            src="https://scontent.fcrk1-3.fna.fbcdn.net/v/t39.30808-6/464563976_8671049262964365_7696643051574271148_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=0b6b33&_nc_eui2=AeEy2LCy2vTyo-qPLUQ01yPG6X3WtDedWVXpfda0N51ZVY-wiRDFMr21HOhjRjmjUBrLZpZI_eHUvaQIG9hkRden&_nc_ohc=wdCLOIBhd68Q7kNvwGzGXh3&_nc_oc=AdnzNycPhknXqeyivsGUIyaQ14CpPh2YMYXJEoLc2ZplTAODveCJl5Cp2631uC6SkF4&_nc_zt=23&_nc_ht=scontent.fcrk1-3.fna&_nc_gid=SqKQ8DGqro7OPG_-5CDNrQ&oh=00_AfOmC1-xnIwCwd6gUdVFxWLbUFCsGMwk53yogx7M2lkxHw&oe=685EC4F5"
+            src="https://i.etsystatic.com/45397601/r/isla/1192e6/70573975/isla_500x500.70573975_sqw22kb4.jpg"
             alt="Sign Up visual"
             className="w-full h-auto shadow-md"
           />
