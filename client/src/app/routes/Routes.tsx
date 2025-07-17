@@ -20,12 +20,16 @@ import ContactPage from "../../features/contact/ContactPage";
 import ServerError from "../errors/ServerError";
 import NotFound from "../errors/NotFound";
 import CheckoutPage from "../../features/checkout/CheckoutPage";
+import RequireAuth from "./RequireAuth";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
     children: [
+      {element: <RequireAuth />, children: [
+          { path: "checkout", element: <CheckoutPage /> },
+      ]},
       { path: "", element: <HomePage /> },
       { path: "new", element: <NewItems /> },
       { path: "best", element: <Best /> },
@@ -36,7 +40,6 @@ export const router = createBrowserRouter([
       { path: "explore", element: <Explore /> },
       { path: "aboutpage", element: <AboutPage /> },
       { path: "contactpage", element: <ContactPage /> },
-      { path: "checkout", element: <CheckoutPage /> },
       { path: "server-error", element: <ServerError /> },
       { path: "not-found", element: <NotFound /> },
       { path: "catalog", element: <Catalog /> },

@@ -38,7 +38,7 @@ export default function Catalog() {
       {/* Main Content */}
       <div className="container mx-auto flex flex-col lg:flex-row gap-8 px-4 sm:px-6 md:px-10">
         {/* Sidebar Filters */}
-        <aside className="w-1/6 space-y-6">
+        <aside className="w-full sm:w-1/6 space-y-6">
           <Filters />
         </aside>
         <div className="w-full">

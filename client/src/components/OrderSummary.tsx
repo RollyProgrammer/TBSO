@@ -47,7 +47,7 @@ export default function OrderSummary() {
         </dl>
 
         <Link
-          to='/checkout'
+          to="/checkout"
           type="submit"
           className="bg-black text-white text-sm px-6 py-3 hover:bg-gray-800 transition w-full flex items-center justify-center gap-2"
         >
@@ -57,10 +57,15 @@ export default function OrderSummary() {
       </form>
 
       <div className="mt-4 text-center lg:text-left">
-        <p className="text-sm text-gray-600 hover:underline cursor-pointer inline-flex items-center gap-1 transition">
-          <ArrowBack fontSize="small" />
-          Back to Shopping
-        </p>
+        <Link
+          to="/catalog"
+          className="text-sm text-gray-600 hover:underline cursor-pointer inline-flex items-center gap-1 transition"
+        >
+          <p className="text-sm text-gray-600 hover:underline cursor-pointer inline-flex items-center gap-1 transition">
+            <ArrowBack fontSize="small" />
+            Back to Shopping
+          </p>
+        </Link>
       </div>
     </div>
   );

@@ -1,14 +1,29 @@
-import { useState } from "react";
 import { ArrowForward } from "@mui/icons-material";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { loginSchema, type LoginSchema } from "../lib/schemas/loginSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useLazyUserInfoQuery, useLoginMutation } from "../features/account/accountApi";
 
-const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export default function Login() {
+  const [login, { isLoading }] = useLoginMutation();
+  const [fetchUserInfo] = useLazyUserInfoQuery();
+  const location = useLocation();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginSchema>({
+    mode: "onTouched",
+    resolver: zodResolver(loginSchema),
+  });
 
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Login submitted:", { email, password });
-    // 🔐 Implement auth logic here
+  const navigate = useNavigate();
+
+  const onSubmit = async (data: LoginSchema) => {
+    await login(data);
+    await fetchUserInfo();
+    navigate(location.state?.from || "/");
   };
 
   return (
@@ -43,41 +58,70 @@ const Login = () => {
 
           {/* Login Form */}
           <form
-            onSubmit={onSubmit}
+            onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-4 mx-auto text-left"
           >
-            <input
-              type="email"
-              required
-              placeholder="Email address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="px-4 py-3 border border-gray-300 outline-none focus:ring-2 focus:ring-black text-sm sm:text-base"
-            />
-            <input
-              type="password"
-              required
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="px-4 py-3 border border-gray-300 outline-none focus:ring-2 focus:ring-black text-sm sm:text-base"
-            />
-
+            <div>
+              <input
+                type="email"
+                placeholder="Email address"
+                {...register("email", { required: "Email is required" })}
+                className={`w-full px-4 py-3 border border-gray-300 outline-none focus:ring-2 focus:ring-black text-sm sm:text-base
+                    ${
+                      errors.email
+                        ? "border-red-500 focus:ring-red-500"
+                        : "border-gray-300 focus:ring-black"
+                    }`}
+              />
+              {errors.email && typeof errors.email.message === "string" && (
+                <p className="text-sm text-red-500 leading-none">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <input
+                type="password"
+                placeholder="Password"
+                {...register("password", { required: "Password is required" })}
+                className={`w-full px-4 py-3 border border-gray-300 outline-none focus:ring-2 focus:ring-black text-sm sm:text-base
+                  ${
+                    errors.password
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-gray-300 focus:ring-black"
+                  }`}
+              />
+              {errors.password &&
+                typeof errors.password.message === "string" && (
+                  <p className="text-sm text-red-500 leading-none">
+                    {errors.password.message}
+                  </p>
+                )}
+            </div>
             <button
+              disabled={isLoading}
               type="submit"
               className="bg-black text-white font-semibold px-6 py-3 hover:bg-gray-800 transition text-sm sm:text-base flex items-center justify-between gap-2"
             >
               Log In <ArrowForward fontSize="small" />
             </button>
-
-             <div className="text-sm text-right text-gray-600 hover:underline">
-              <a href="#">Forgot your password?</a>
+            <div className="flex items-center justify-between text-sm text-gray-600">
+              <a href="#" className="underline transition-colors duration-200">
+                Forgot your password?
+              </a>
+              <div className="flex items-center space-x-1">
+                <p>Already have an account?</p>
+                <Link
+                  to="/signup"
+                  className="underline hover:text-gray-800 transition-colors duration-200"
+                >
+                  Sign up
+                </Link>
+              </div>
             </div>
           </form>
         </div>
       </div>
     </section>
   );
-};
-
-export default Login;
+}

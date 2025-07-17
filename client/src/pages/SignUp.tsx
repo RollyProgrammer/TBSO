@@ -1,17 +1,43 @@
-import { useState } from "react";
 import { ArrowForward } from "@mui/icons-material";
 import { Link } from "react-router-dom";
+import { useRegisterMutation } from "../features/account/accountApi";
+import {
+  registerSchema,
+  type RegisterSchema,
+} from "../lib/schemas/registerSchema";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-const SignUp = () => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export default function SignUp() {
+  const [registerUser] = useRegisterMutation();
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isValid, isLoading },
+  } = useForm<RegisterSchema>({
+    mode: 'onTouched',
+    resolver: zodResolver(registerSchema),
+  });
 
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Sign Up submitted:", { firstName, lastName, email, password });
-    // 🔐 Hook up registration logic here
+  const onSubmit = async (data: RegisterSchema) => {
+    try {
+      await registerUser(data).unwrap();
+    } catch (error) {
+      const apiError = error as { message: string };
+      if (apiError.message && typeof apiError.message === 'string') {
+        const errorArray = apiError.message.split(",");
+        
+        errorArray.forEach((e) => {
+          if (e.includes('Password')) {
+            setError('password', { message: e });
+          }
+          else if (e.includes('Email')) {
+            setError('email', { message: e });
+          }
+        });
+      }
+    }
   };
 
   return (
@@ -70,7 +96,7 @@ const SignUp = () => {
 
           {/* Sign Up Form */}
           <form
-            onSubmit={onSubmit}
+            onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-4 mx-auto text-left"
           >
             <div>
@@ -81,8 +107,6 @@ const SignUp = () => {
                 type="text"
                 required
                 placeholder="First Name"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 outline-none focus:ring-2 focus:ring-black text-sm sm:text-base"
               />
             </div>
@@ -95,8 +119,6 @@ const SignUp = () => {
                 type="text"
                 required
                 placeholder="Last Name"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 outline-none focus:ring-2 focus:ring-black text-sm sm:text-base"
               />
             </div>
@@ -107,10 +129,19 @@ const SignUp = () => {
                 type="email"
                 required
                 placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 outline-none focus:ring-2 focus:ring-black text-sm sm:text-base"
+                {...register("email", { required: "Email is required" })}
+                className={`w-full px-4 py-3 border border-gray-300 outline-none focus:ring-2 focus:ring-black text-sm sm:text-base
+                    ${
+                      errors.email
+                        ? "border-red-500 focus:ring-red-500"
+                        : "border-gray-300 focus:ring-black"
+                    }`}
               />
+              {errors.email && typeof errors.email.message === "string" && (
+                <p className="text-sm text-red-500 leading-none">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
 
             <div>
@@ -119,27 +150,41 @@ const SignUp = () => {
                 type="password"
                 required
                 placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 outline-none focus:ring-2 focus:ring-black text-sm sm:text-base"
+                {...register("password", { required: "Password is required" })}
+                className={`w-full px-4 py-3 border border-gray-300 outline-none focus:ring-2 focus:ring-black text-sm sm:text-base
+                  ${
+                    errors.password
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-gray-300 focus:ring-black"
+                  }`}
               />
+              {errors.password &&
+                typeof errors.password.message === "string" && (
+                  <p className="text-sm text-red-500 leading-none">
+                    {errors.password.message}
+                  </p>
+                )}
             </div>
-
             <button
+              disabled={isLoading || !isValid}
               type="submit"
               className="mt-4 bg-black text-white font-semibold px-6 py-3 hover:bg-gray-800 transition text-sm sm:text-base flex items-center justify-center gap-2"
             >
               Create Account <ArrowForward fontSize="small" />
             </button>
 
-            <div className="text-sm text-right text-gray-600 hover:underline mt-2">
-              <Link to="/login">Already have an account? Log in</Link>
+            <div className="flex items-center justify-end text-sm text-gray-600 space-x-1">
+              <p className="leading-snug">Already have an account?</p>
+              <Link
+                to="/login"
+                className="text-gray-600 underline hover:text-gray-800 transition-colors duration-200"
+              >
+                Log in
+              </Link>
             </div>
           </form>
         </div>
       </div>
     </section>
   );
-};
-
-export default SignUp;
+}

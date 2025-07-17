@@ -1,21 +1,13 @@
-import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import {
-  Menu,
-  Close,
-  Search,
-  ShoppingCart,
-  AccountCircle,
-} from "@mui/icons-material";
 import { brandLink, midLinks, rightLinks } from "../constants/navLinks";
 import { useFetchBasketQuery } from "../features/basket/basketApi";
-
-const isLoggedIn = false;
-
-// Logout handler
-const handleLogout = () => {
-  // Implement logout logic here
-};
+import UserMenu from "../layout/UserMenu";
+import {
+  useLogoutMutation,
+  useUserInfoQuery,
+} from "../features/account/accountApi";
+import { Close, Menu, Search, ShoppingCart } from "@mui/icons-material";
+import { useState } from "react";
 
 // Reusable nav item component
 function NavItem({ title, path }: { title: string; path: string }) {
@@ -34,10 +26,13 @@ function NavItem({ title, path }: { title: string; path: string }) {
 }
 
 export default function NavBar() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // Toggle mobile menu
+  const { data: user } = useUserInfoQuery();
   const { data: basket } = useFetchBasketQuery();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [logout] = useLogoutMutation();
 
-  const itemCount = basket?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
+  const itemCount =
+    basket?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
   return (
     <nav className="fixed top-[92px] sm:top-9 left-0 right-0 z-40 bg-white shadow py-3">
@@ -51,9 +46,7 @@ export default function NavBar() {
         </div>
 
         {/* Desktop mid links */}
-        <div
-          className={`hidden md:flex gap-4 ${isLoggedIn ? "mr-[7.25rem]" : ""}`}
-        >
+        <div className={`hidden md:flex gap-4 ${user ? "ml-20" : "ml-20"}`}>
           {midLinks.map((link) => (
             <NavItem key={link.path} {...link} />
           ))}
@@ -71,7 +64,32 @@ export default function NavBar() {
             />
           </div>
 
-          {/* Cart icon with badge */}
+          {/* Cart icon - desktop only */}
+          <div className="hidden md:block">
+            <Link to="/cart" className="relative cursor-pointer">
+              <ShoppingCart className="text-gray-800" />
+              <span className="absolute -top-2 -right-2 text-xs bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
+                {itemCount}
+              </span>
+            </Link>
+          </div>
+
+          {user ? (
+            <div className="hidden md:flex items-center gap-2">
+              <UserMenu user={user} />
+            </div>
+          ) : (
+            <div className="hidden md:flex items-center gap-2">
+              {rightLinks.map((link) => (
+                <NavItem key={link.path} {...link} />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Cart + Menu button - mobile only */}
+        <div className="flex items-center gap-4 md:hidden">
+          {/* Cart icon - mobile only */}
           <Link to="/cart" className="relative cursor-pointer">
             <ShoppingCart className="text-gray-800" />
             <span className="absolute -top-2 -right-2 text-xs bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
@@ -79,70 +97,83 @@ export default function NavBar() {
             </span>
           </Link>
 
-          {/* Right links or account menu (desktop only) */}
-          <div className="hidden md:flex gap-4 items-center relative">
-            {!isLoggedIn ? (
-              rightLinks.map((link) => <NavItem key={link.path} {...link} />)
-            ) : (
-              <div className="relative group">
-                <AccountCircle className="text-gray-800 !w-7 !h-7 cursor-pointer" />
-                {/* Hover dropdown */}
-                <div className="group-hover:block hidden absolute right-0 pt-4 z-50 transition-all duration-150">
-                  <div className="flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500 rounded shadow-lg">
-                    <Link to="/profile" className="hover:text-black">
-                      My Profile
-                    </Link>
-                    <Link to="/orders" className="hover:text-black">
-                      Orders
-                    </Link>
-                    <p
-                      onClick={handleLogout}
-                      className="cursor-pointer hover:text-black"
-                    >
-                      Logout
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Mobile menu toggle button */}
           <button
-            className="md:hidden"
+            className="text-gray-800"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? <Close /> : <Menu />}
           </button>
         </div>
       </div>
-      {/* Mobile nav menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden mt-2 border-t border-gray-300 pt-3 px-4 space-y-3 bg-white">
-          {/* Mid links */}
-          {midLinks.map((link) => (
-            <div key={link.path}>
-              <NavItem {...link} />
-            </div>
-          ))}
 
-          {/* Conditional right section for mobile */}
-          {isLoggedIn ? (
-            <div>
-              <p
-                onClick={handleLogout}
-                className="text-sm font-medium px-2 text-gray-500 hover:text-black cursor-pointer"
+      {mobileMenuOpen && (
+        <div className="md:hidden px-4 py-4 bg-white shadow rounded-b space-y-4">
+          {/* Middle links */}
+          <div className="flex flex-col gap-2">
+            {midLinks.map((link) => (
+              <NavLink
+                key={link.path}
+                to={link.path}
+                onClick={() => setMobileMenuOpen(false)}
+                className={({ isActive }) =>
+                  `text-sm font-medium ${
+                    isActive ? "font-extrabold text-black" : "text-gray-500"
+                  }`
+                }
               >
-                LOGOUT
-              </p>
-            </div>
-          ) : (
-            rightLinks.map((link) => (
-              <div key={link.path}>
-                <NavItem {...link} />
-              </div>
-            ))
-          )}
+                {link.title.toUpperCase()}
+              </NavLink>
+            ))}
+          </div>
+
+          {/* Auth section */}
+          <div className="flex flex-col gap-2 border-t pt-4">
+            {user ? (
+              <>
+                <span className="font-medium text-gray-600">{user.email}</span>
+                <Link
+                  to="/profile"
+                  className="text-gray-600 hover:text-black"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Profile
+                </Link>
+                <Link
+                  to="/orders"
+                  className="text-gray-600 hover:text-black"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Orders
+                </Link>
+                <p
+                  onClick={async () => {
+                    try {
+                      await logout({}).unwrap(); // waits for the API call to finish and throws if there's an error
+                      setMobileMenuOpen(false);
+                      // optionally redirect or clear local state
+                    } catch (error) {
+                      console.error("Logout failed:", error);
+                      // Optionally show user feedback
+                    }
+                  }}
+                  className="text-red-500 cursor-pointer"
+                >
+                  Logout
+                </p>
+              </>
+            ) : (
+              rightLinks.map((link) => (
+                <NavLink
+                  key={link.path}
+                  to={link.path}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-gray-500 hover:text-black"
+                >
+                  {link.title}
+                </NavLink>
+              ))
+            )}
+          </div>
         </div>
       )}
     </nav>
