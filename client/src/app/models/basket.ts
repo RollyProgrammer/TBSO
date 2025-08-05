@@ -1,10 +1,11 @@
 import type { Product } from "./product";
 
-
 export type Basket = {
-  basketId: string
-  items: Item[]
-}
+  basketId: string;
+  items: Item[];
+  clientSecret?: string;
+  paymentIntentId?: string;
+};
 
 export class Item {
   constructor(product: Product, quantity: number) {
@@ -17,11 +18,11 @@ export class Item {
     this.quantity = quantity;
   }
 
-  productId: number
-  name: string
-  price: number
-  pictureUrl: string
-  brand: string
-  type: string
-  quantity: number
+  productId: number;
+  name: string;
+  price: number;
+  pictureUrl: string;
+  brand: string;
+  type: string;
+  quantity: number;
 }

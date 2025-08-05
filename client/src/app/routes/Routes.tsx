@@ -21,6 +21,7 @@ import ServerError from "../errors/ServerError";
 import NotFound from "../errors/NotFound";
 import CheckoutPage from "../../features/checkout/CheckoutPage";
 import RequireAuth from "./RequireAuth";
+import CheckoutSuccess from "../../features/checkout/CheckoutSuccess";
 
 export const router = createBrowserRouter([
   {
@@ -29,6 +30,7 @@ export const router = createBrowserRouter([
     children: [
       {element: <RequireAuth />, children: [
           { path: "checkout", element: <CheckoutPage /> },
+          { path: "checkout/success", element: <CheckoutSuccess /> },
       ]},
       { path: "", element: <HomePage /> },
       { path: "new", element: <NewItems /> },
