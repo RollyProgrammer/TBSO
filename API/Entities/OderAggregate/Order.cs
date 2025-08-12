@@ -12,7 +12,7 @@ public class Order
     public decimal Subtotal { get; set; }
     public decimal DeliveryFee { get; set; }
     public decimal Discount { get; set; }
-    public required string PaymentIntendId { get; set; }
+    public required string PaymentIntentId { get; set; }
     public OrderStatus OrderStatus { get; set; } = OrderStatus.Pending;
     public required PaymentSummary PaymentSummary { get; set; }
 
