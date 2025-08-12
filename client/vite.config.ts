@@ -5,6 +5,11 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  build: {
+    outDir: '../API/wwwroot',
+    chunkSizeWarningLimit: 1024,
+    emptyOutDir: true
+  },
   server: {
     port: 3000
   },
