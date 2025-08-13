@@ -4,7 +4,6 @@ import { AddressElement, PaymentElement, useElements, useStripe } from "@stripe/
 import { useState } from "react";
 import Review from "./Review";
 import { useFetchAddressQuery, useUpdateUserAddressMutation } from "../account/accountApi";
-import type { Address } from "../../app/models/user";
 import type { ConfirmationToken, StripeAddressElementChangeEvent, StripePaymentElementChangeEvent } from "@stripe/stripe-js";
 import { useBasket } from "../../lib/hooks/useBasket";
 import { currencyFormat } from "../../lib/util";
@@ -18,7 +17,7 @@ export default function CheckoutStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [createOrder] = useCreateOrderMutation();
   const { basket } = useBasket();
-  const { data: { name, ...restAddress } = {} as Address, isLoading } = useFetchAddressQuery();
+  const { data, isLoading } = useFetchAddressQuery();
   const [updateAddress] = useUpdateUserAddressMutation();
   const [saveAddressChecked, setSaveAddressChecked] = useState(false);
   const elements = useElements();
@@ -29,6 +28,11 @@ export default function CheckoutStepper() {
   const { total, clearBasket } = useBasket();
   const navigate = useNavigate();
   const [confirmationToken, setConfirmationToken] = useState<ConfirmationToken | null>(null);
+
+  let name, restAddress;
+  if (data) {
+    ({ name, ...restAddress } = data);
+  }
 
   const handleNext = async () => {
     if (activeStep === 0 && saveAddressChecked && elements) {
@@ -67,7 +71,7 @@ export default function CheckoutStepper() {
       });
 
       if (paymentResult?.paymentIntent?.status === "succeeded") {
-        navigate("/checkout/success", {state: orderResult});
+        navigate("/checkout/success", { state: orderResult });
         clearBasket();
       } else if (paymentResult?.error) {
         throw new Error(paymentResult.error.message);
@@ -88,10 +92,10 @@ export default function CheckoutStepper() {
     const shippingAddress = await getStripeAddress();
     const paymentSummary = confirmationToken?.payment_method_preview.card;
 
-    if (!shippingAddress || !paymentSummary) throw new Error('Problem creating order');
+    if (!shippingAddress || !paymentSummary) throw new Error("Problem creating order");
 
-      return { shippingAddress, paymentSummary };
-  }
+    return { shippingAddress, paymentSummary };
+  };
 
   const getStripeAddress = async () => {
     const addressElement = elements?.getElement("address");
