@@ -13,8 +13,8 @@ const sortOptions = [
 ];
 
 export default function Catalog() {
-  const productParams = useAppSelector((state) => state.catalog); // Full params
-  const selectedSort = useAppSelector((state) => state.catalog.orderBy); // Just orderBy
+  const productParams = useAppSelector((state) => state.catalog);
+  const selectedSort = useAppSelector((state) => state.catalog.orderBy);
   const { data: filtersData } = useFetchFiltersQuery();
   const { data: products, isLoading } = useFetchProductsQuery(productParams);
   const dispatch = useAppDispatch();

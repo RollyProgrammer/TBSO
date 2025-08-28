@@ -3,7 +3,7 @@ import { useFetchProductsQuery } from "../catalog/catalogApi";
 import { currencyFormat } from "../../lib/util";
 import { setPageNumber } from "../catalog/catalogSlice";
 import AppPagination from "../../components/AppPagination";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import ProductForm from "./ProductForm";
 import type { Product } from "../../app/models/product";
@@ -29,7 +29,7 @@ export default function InventoryPage() {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   if (editMode) return <ProductForm setEditMode={setEditMode} product={selectedProduct} refetch={refetch} setSelectedProduct={setSelectedProduct} />;
 
@@ -38,8 +38,9 @@ export default function InventoryPage() {
       {/* Header */}
       <header className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold text-gray-800">Inventory</h1>
-        <button onClick={() => setEditMode(true)} className="px-4 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition">
-          Create
+        <button onClick={() => setEditMode(true)} className="flex items-center gap-2 px-4 py-1.5 rounded-sm bg-gray-900 text-white font-medium hover:bg-gray-700 transition">
+          <Plus size={16} />
+          New
         </button>
       </header>
 
@@ -50,10 +51,11 @@ export default function InventoryPage() {
             <tr>
               <th className="px-4 py-3 text-sm font-medium">#</th>
               <th className="px-4 py-3 text-sm font-medium">Product</th>
-              <th className="px-4 py-3 text-sm font-medium text-right">Price</th>
-              <th className="px-4 py-3 text-sm font-medium text-center">Type</th>
-              <th className="px-4 py-3 text-sm font-medium text-center">Brand</th>
-              <th className="px-4 py-3 text-sm font-medium text-center">Quantity</th>
+              <th className="px-4 py-3 text-sm font-medium text-left">Selling Price</th>
+              <th className="px-4 py-3 text-sm font-medium text-left">Category</th>
+              <th className="px-4 py-3 text-sm font-medium text-left">Brand</th>
+              <th className="px-4 py-3 text-sm font-medium text-left">Type</th>
+              <th className="px-4 py-3 text-sm font-medium text-left">Quantity</th>
               <th className="px-4 py-3 text-sm font-medium text-center">Actions</th>
             </tr>
           </thead>
@@ -68,16 +70,18 @@ export default function InventoryPage() {
                       <span className="font-medium text-gray-800">{product.name}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-right font-medium text-gray-700">{currencyFormat(product.price)}</td>
-                  <td className="px-4 py-3 text-center text-gray-600">{product.type}</td>
-                  <td className="px-4 py-3 text-center text-gray-600">{product.brand}</td>
-                  <td className="px-4 py-3 text-center text-gray-600">{product.quantityInStock}</td>
+                  <td className="px-4 py-3 text-left font-medium text-gray-700">{currencyFormat(product.price)}</td>
+                  <td className="px-4 py-3 text-left text-gray-600">{product.brand}</td> {/* Category */}
+                  <td className="px-4 py-3 text-left text-gray-600">{product.brand}</td>
+                  <td className="px-4 py-3 text-left text-gray-600">{product.type}</td>
+                  <td className="px-4 py-3 text-left text-gray-600">{product.quantityInStock}</td>
                   <td className="px-4 py-3 text-center flex items-center justify-center gap-2">
-                    <button onClick={() => handleSelectProduct(product)} className="p-2 rounded-lg text-blue-600 hover:bg-blue-50 transition">
-                      <Pencil className="w-5 h-5" />
+                    <button onClick={() => handleSelectProduct(product)} className="flex p-2 rounded-lg text-green-600 hover:text-green-300 transition">
+                      <Pencil className="w-5 h-5" /> Edit
                     </button>
-                    <button onClick={() => handleDeleteProduct(product.id)} className="p-2 rounded-lg text-red-600 hover:bg-red-50 transition">
-                      <Trash2 className="w-5 h-5" />
+                    |
+                    <button onClick={() => handleDeleteProduct(product.id)} className="flex p-2 rounded-lg text-red-600 hover:bg-red-50 transition">
+                      <Trash2 className="w-5 h-5" /> Delete
                     </button>
                   </td>
                 </tr>

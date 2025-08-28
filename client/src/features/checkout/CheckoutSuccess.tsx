@@ -1,4 +1,3 @@
-import { Box, Button, Container, Divider, Paper, Typography } from "@mui/material";
 import { Link, useLocation } from "react-router-dom";
 import type { Order } from "../../app/models/order";
 import { currencyFormat, formatAddressString, formatPaymentString } from "../../lib/util";
@@ -7,65 +6,46 @@ export default function CheckoutSuccess() {
   const { state } = useLocation();
   const order = state.data as Order;
 
-  if (!order) return <Typography>Problem accessing the order</Typography>;
+  if (!order) return <p className="text-gray-600">Problem accessing the order</p>;
 
   return (
-    <Container>
-      <>
-        <Typography variant="h4" gutterBottom fontWeight="bold">
-          Thanks for your fake order!
-        </Typography>
-        <Typography variant="body1" color="textSecondary" gutterBottom>
-          Your order <strong>#{order.id}</strong> will never be processed as this is a fake shop.
-        </Typography>
+    <div className="max-w-5xl mx-auto px-4 py-6">
+      <h1 className="text-2xl font-bold mb-2">Thanks for your order!</h1>
+      <p className="text-gray-600 mb-6">
+        Your order <strong>#{order.id}</strong> will be processed.
+      </p>
 
-        <Paper elevation={1} sx={{ p: 2, mb: 2, display: "flex", flexDirection: "column", gap: 1.4 }}>
-          <Box display="flex" justifyContent="space-between">
-            <Typography variant="body2" color="textSecondary">
-              Order Date
-            </Typography>
-            <Typography variant="body2" fontWeight="bold">
-              {order.orderDate}
-            </Typography>
-          </Box>
-          <Divider />
-          <Box display="flex" justifyContent="space-between">
-            <Typography variant="body2" color="textSecondary">
-              Payment Method
-            </Typography>
-            <Typography variant="body2" fontWeight="bold">
-              {formatPaymentString(order.paymentSummary)}
-            </Typography>
-          </Box>
-          <Divider />
-          <Box display="flex" justifyContent="space-between">
-            <Typography variant="body2" color="textSecondary">
-              Payment Method
-            </Typography>
-            <Typography variant="body2" fontWeight="bold">
-              {formatAddressString(order.shippingAddress)}
-            </Typography>
-          </Box>
-          <Divider />
-          <Box display="flex" justifyContent="space-between">
-            <Typography variant="body2" color="textSecondary">
-              Amount
-            </Typography>
-            <Typography variant="body2" fontWeight="bold">
-              {currencyFormat(order?.total)}
-            </Typography>
-          </Box>
-        </Paper>
+      <div className="bg-white shadow  p-4 mb-6 space-y-3">
+        <div className="flex justify-between text-sm">
+          <span className="text-gray-500">Order Date</span>
+          <span className="font-medium">{order.orderDate}</span>
+        </div>
+        <hr />
+        <div className="flex justify-between text-sm">
+          <span className="text-gray-500">Payment Method</span>
+          <span className="font-medium">{formatPaymentString(order.paymentSummary)}</span>
+        </div>
+        <hr />
+        <div className="flex justify-between text-sm">
+          <span className="text-gray-500">Shipping Address</span>
+          <span className="font-medium">{formatAddressString(order.shippingAddress)}</span>
+        </div>
+        <hr />
+        <div className="flex justify-between text-sm">
+          <span className="text-gray-500">Amount</span>
+          <span className="font-medium">{currencyFormat(order?.total)}</span>
+        </div>
+      </div>
 
-        <Box display="flex" justifyContent={"flex-start"} gap={2}>
-          <Button variant="contained" color="primary" component={Link} to={`/orders/${order.id}`}>
-            View your order
-          </Button>
-          <Button component={Link} to="/catalog" variant="outlined" color="primary">
-            Continue shopping
-          </Button>
-        </Box>
-      </>
-    </Container>
+      <div className="flex justify-start gap-3">
+        <Link to={`/orders/${order.id}`} className="px-4 py-2 bg-gray-900 text-white font-medium hover:bg-gray-700 transition">
+          View your order
+        </Link>
+
+        <Link to="/catalog" className="px-4 py-2 border border-gray-400 text-gray-700 font-medium hover:bg-gray-100 transition">
+          Continue shopping
+        </Link>
+      </div>
+    </div>
   );
 }

@@ -31,53 +31,28 @@ export default function Login() {
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12">
         {/* Image Section */}
         <div className="w-full lg:w-1/2">
-          <img
-            src="https://i.etsystatic.com/45397601/r/isla/1192e6/70573975/isla_500x500.70573975_sqw22kb4.jpg"
-            alt="Login visual"
-            className="w-full h-auto shadow-md"
-          />
+          <img src="https://i.etsystatic.com/45397601/r/isla/1192e6/70573975/isla_500x500.70573975_sqw22kb4.jpg" alt="Login visual" className="w-full h-auto shadow-md" />
         </div>
 
         {/* Login Text + Form */}
         <div className="w-full lg:w-1/2 text-start">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl uppercase font-bold mb-4 sm:mb-5">
-            Log in
-          </h1>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl uppercase font-bold mb-4 sm:mb-5">Log in</h1>
 
-          <p className="mb-4 text-sm sm:text-base text-gray-700">
-            Welcome to our online store! We are dedicated to providing you with
-            the best shopping experience.
-          </p>
-          <p className="mb-4 text-sm sm:text-base text-gray-700">
-            Our team is passionate about curating a wide range of products that
-            cater to your needs and preferences.
-          </p>
-          <p className="mb-10 text-sm sm:text-base text-gray-700">
-            Thank you for choosing us, and we look forward to serving you!
-          </p>
+          <p className="mb-4 text-sm sm:text-base text-gray-700">Welcome to our online store! We are dedicated to providing you with the best shopping experience.</p>
+          <p className="mb-4 text-sm sm:text-base text-gray-700">Our team is passionate about curating a wide range of products that cater to your needs and preferences.</p>
+          <p className="mb-10 text-sm sm:text-base text-gray-700">Thank you for choosing us, and we look forward to serving you!</p>
 
           {/* Login Form */}
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col gap-4 mx-auto text-left"
-          >
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 mx-auto text-left">
             <div>
               <input
                 type="email"
                 placeholder="Email address"
                 {...register("email", { required: "Email is required" })}
                 className={`w-full px-4 py-3 border border-gray-300 outline-none focus:ring-2 focus:ring-black text-sm sm:text-base
-                    ${
-                      errors.email
-                        ? "border-red-500 focus:ring-red-500"
-                        : "border-gray-300 focus:ring-black"
-                    }`}
+                    ${errors.email ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-black"}`}
               />
-              {errors.email && typeof errors.email.message === "string" && (
-                <p className="text-sm text-red-500 leading-none">
-                  {errors.email.message}
-                </p>
-              )}
+              {errors.email && typeof errors.email.message === "string" && <p className="text-sm text-red-500 leading-none">{errors.email.message}</p>}
             </div>
             <div>
               <input
@@ -85,18 +60,9 @@ export default function Login() {
                 placeholder="Password"
                 {...register("password", { required: "Password is required" })}
                 className={`w-full px-4 py-3 border border-gray-300 outline-none focus:ring-2 focus:ring-black text-sm sm:text-base
-                  ${
-                    errors.password
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 focus:ring-black"
-                  }`}
+                  ${errors.password ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-black"}`}
               />
-              {errors.password &&
-                typeof errors.password.message === "string" && (
-                  <p className="text-sm text-red-500 leading-none">
-                    {errors.password.message}
-                  </p>
-                )}
+              {errors.password && typeof errors.password.message === "string" && <p className="text-sm text-red-500 leading-none">{errors.password.message}</p>}
             </div>
             <button
               disabled={isLoading}
@@ -111,10 +77,7 @@ export default function Login() {
               </a>
               <div className="flex items-center space-x-1">
                 <p>Already have an account?</p>
-                <Link
-                  to="/signup"
-                  className="underline hover:text-gray-800 transition-colors duration-200"
-                >
+                <Link to="/signup" className="underline hover:text-gray-800 transition-colors duration-200">
                   Sign up
                 </Link>
               </div>

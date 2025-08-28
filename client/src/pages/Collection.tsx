@@ -25,7 +25,7 @@ export default function Collection() {
   if (isLoading || !filtersData)
     return (
       <div className="flex justify-center items-center min-h-[60vh] text-gray-600 text-sm sm:text-base">
-        Loading Catalog Page...
+        Loading Collections...
       </div>
     );
   return (

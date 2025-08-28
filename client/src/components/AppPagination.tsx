@@ -25,11 +25,7 @@ export default function AppPagination({ metadata, onPageChange }: Props) {
           <button
             key={page}
             onClick={() => onPageChange(page)}
-            className={`px-3 py-2 text-sm font-medium border border-gray-300 ${
-              page === currentPage
-                ? "bg-gray-800 text-white"
-                : "bg-white text-gray-700 hover:bg-gray-100"
-            }`}
+            className={`px-3 py-2 text-sm font-medium border border-gray-300 ${page === currentPage ? "bg-gray-800 text-white" : "bg-white text-gray-700 hover:bg-gray-100"}`}
           >
             {page}
           </button>

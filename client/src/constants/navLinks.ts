@@ -7,7 +7,6 @@ export const midLinks = [
   { title: "Collection", path: "/collection" },
   { title: "About Us", path: "/aboutpage" },
   { title: "Contact", path: "/contactpage" },
-  { title: "Catalog", path: "/catalog" },
 ];
 
 export const rightLinks = [

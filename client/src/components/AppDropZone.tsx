@@ -1,14 +1,14 @@
-import { UploadFile } from "@mui/icons-material";
-import { FormControl, FormHelperText, Typography } from "@mui/material";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { useController, type FieldValues, type UseControllerProps } from "react-hook-form";
+import { Upload } from "lucide-react";
 
 type Props<T extends FieldValues> = {
   name: keyof T;
+  existingImage?: string | null;
 } & UseControllerProps<T>;
 
-export default function AppDropZone<T extends FieldValues>(props: Props<T>) {
+export default function AppDropZone<T extends FieldValues>({ existingImage, ...props }: Props<T>) {
   const { fieldState, field } = useController({ ...props });
 
   const onDrop = useCallback(
@@ -17,7 +17,6 @@ export default function AppDropZone<T extends FieldValues>(props: Props<T>) {
         const fileWithPreview = Object.assign(acceptedFiles[0], {
           preview: URL.createObjectURL(acceptedFiles[0]),
         });
-
         field.onChange(fileWithPreview);
       }
     },
@@ -26,32 +25,39 @@ export default function AppDropZone<T extends FieldValues>(props: Props<T>) {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
-  const dzStyles = {
-    display: "flex",
-    border: "dashed 2px #767676",
-    borderColor: "#767676",
-    borderRadius: "5px",
-    paddingTop: "30px",
-    alignItems: "center",
-    height: 200,
-    width: 500,
-  };
+  const file = field.value as (File & { preview?: string }) | undefined;
+  const previewSrc = file?.preview || existingImage || null;
 
-  const dzActive = {
-    borderColor: "green",
-  };
+  // Clean up object URL to avoid memory leaks
+  useEffect(() => {
+    return () => {
+      if (file?.preview) {
+        URL.revokeObjectURL(file.preview);
+      }
+    };
+  }, [file]);
 
   return (
-    <div {...getRootProps()}>
-      <FormControl style={isDragActive ? { ...dzStyles, ...dzActive } : dzStyles} error={!!fieldState.error}>
-        <div {...getRootProps()}>
-          <input {...getInputProps()} />
-          <UploadFile sx={{ fontSize: "100px" }} />
-          <Typography variant="h4">Drop image here</Typography>
-          <Typography>Drag 'n' drop some files here, or click to select files</Typography>
+    <div
+      {...getRootProps()}
+      className={`relative flex items-center justify-center w-full max-w-md h-100 rounded-lg border-2 border-dashed cursor-pointer overflow-hidden transition
+        ${isDragActive ? "border-green-500 bg-green-50" : "border-gray-400 hover:border-gray-500"}
+        ${fieldState.error ? "border-red-500 bg-red-50" : ""}`}
+      aria-label="Image upload dropzone"
+    >
+      <input {...getInputProps()} />
+
+      {previewSrc ? (
+        <img src={previewSrc} alt="Preview" className="object-cover w-full h-full" />
+      ) : (
+        <div className="flex flex-col items-center justify-center text-center px-4">
+          <Upload className="w-16 h-16 text-gray-500 mb-2" />
+          <p className="text-lg font-semibold text-gray-700">Drop image here</p>
+          <p className="text-sm text-gray-500">Drag & drop or click to select a file</p>
         </div>
-        <FormHelperText>{fieldState.error?.message}</FormHelperText>
-      </FormControl>
+      )}
+
+      {fieldState.error && <p className="absolute bottom-2 text-sm text-red-500 bg-white/70 px-2 rounded">{fieldState.error.message}</p>}
     </div>
   );
 }

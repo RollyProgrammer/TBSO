@@ -1,5 +1,3 @@
-import { Checkbox, Typography, Box, FormControlLabel, Button } from "@mui/material";
-import { LoadingButton } from "@mui/lab";
 import { AddressElement, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { useState } from "react";
 import Review from "./Review";
@@ -121,7 +119,9 @@ export default function CheckoutStepper() {
     setPaymentComplete(event.complete);
   };
 
-  if (isLoading) return <Typography variant="h6">Loading checkout...</Typography>;
+  if (isLoading) {
+    return <div className="flex justify-center items-center min-h-[60vh] text-gray-600 text-sm sm:text-base">Loading Checkout...</div>;
+  }
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md w-full">
@@ -135,17 +135,9 @@ export default function CheckoutStepper() {
         ))}
       </div>
 
-      {/* Step Content */}
-      {/* <div className="text-center mb-6">
-        <p className="text-lg font-medium">
-          {activeStep === 0 && "Address step"}
-          {activeStep === 1 && "Payment step"}
-          {activeStep === 2 && "Review step"}
-        </p>
-      </div> */}
-
-      <Box sx={{ mt: 2 }}>
-        <Box sx={{ display: activeStep === 0 ? "block" : "none" }}>
+      <div className="mt-2">
+        {/* Step 0: Address Form */}
+        <div className={activeStep === 0 ? "block" : "hidden"}>
           <AddressElement
             options={{
               mode: "shipping",
@@ -156,14 +148,16 @@ export default function CheckoutStepper() {
             }}
             onChange={handleAddressChange}
           />
-          <FormControlLabel
-            sx={{ display: "flex", justifyContent: "end" }}
-            control={<Checkbox checked={saveAddressChecked} onChange={(e) => setSaveAddressChecked(e.target.checked)} />}
-            label="Save as default address"
-          />
-        </Box>
+          <div className="flex justify-end mt-4">
+            <label className="inline-flex items-center space-x-2">
+              <input type="checkbox" checked={saveAddressChecked} onChange={(e) => setSaveAddressChecked(e.target.checked)} className="form-checkbox h-4 w-4 text-blue-600" />
+              <span className="text-sm text-gray-700">Save as default address</span>
+            </label>
+          </div>
+        </div>
 
-        <Box sx={{ display: activeStep === 1 ? "block" : "none" }}>
+        {/* Step 1: Payment Element */}
+        <div className={activeStep === 1 ? "block" : "hidden"}>
           <PaymentElement
             onChange={handlePaymentChange}
             options={{
@@ -173,22 +167,40 @@ export default function CheckoutStepper() {
               },
             }}
           />
-        </Box>
+        </div>
 
-        <Box sx={{ display: activeStep === 2 ? "block" : "none" }}>
+        {/* Step 2: Review */}
+        <div className={activeStep === 2 ? "block" : "hidden"}>
           <Review confirmationToken={confirmationToken} />
-        </Box>
-      </Box>
+        </div>
+      </div>
 
-      {/* Buttons */}
       <div className="flex justify-between pt-2">
-        <Button onClick={handleBack} disabled={activeStep === 0}>
+        {/* Back Button */}
+        <button
+          onClick={handleBack}
+          disabled={activeStep === 0}
+          className={`px-4 py-2 text-sm font-medium transition 
+      ${activeStep === 0 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
+        >
           Back
-        </Button>
+        </button>
 
-        <LoadingButton onClick={handleNext} disabled={(activeStep === 0 && !addressComplete) || (activeStep === 1 && !paymentComplete) || submitting} loading={submitting}>
+        {/* Next / Pay Button */}
+        <button
+          onClick={handleNext}
+          disabled={(activeStep === 0 && !addressComplete) || (activeStep === 1 && !paymentComplete) || submitting}
+          className={`px-4 py-2 text-sm font-medium transition flex items-center gap-2
+      ${(activeStep === 0 && !addressComplete) || (activeStep === 1 && !paymentComplete) || submitting ? "bg-gray-300 text-white cursor-not-allowed" : "bg-gray-900 text-white hover:bg-gray-700"}`}
+        >
+          {submitting && (
+            <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+          )}
           {activeStep === steps.length - 1 ? `Pay ${currencyFormat(total)}` : "Next"}
-        </LoadingButton>
+        </button>
       </div>
     </div>
   );
