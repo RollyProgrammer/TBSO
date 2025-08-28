@@ -1,3 +1,4 @@
+import type { FieldValues, Path, UseFormSetError } from "react-hook-form";
 import type { PaymentSummary, ShippingAddress } from "../app/models/order";
 
 // export function currencyFormat(amount: number | string | null | undefined): string {
@@ -6,7 +7,18 @@ import type { PaymentSummary, ShippingAddress } from "../app/models/order";
 
 //   const hasCents = num % 1 !== 0; // true if there's a fractional part
 
-//   return num.toLocaleString("en-PH", {
+  // return num.toLocaleString("en-PH", {
+  //   style: "currency",
+  //   currency: "PHP",
+  //   minimumFractionDigits: hasCents ? 2 : 0,
+  //   maximumFractionDigits: 2,
+  // });
+// }
+
+// export function currencyFormat(amount: number) {
+  
+//   const hasCents = amount % 1 !== 0;
+//   return amount.toLocaleString("en-PH", {
 //     style: "currency",
 //     currency: "PHP",
 //     minimumFractionDigits: hasCents ? 2 : 0,
@@ -14,8 +26,9 @@ import type { PaymentSummary, ShippingAddress } from "../app/models/order";
 //   });
 // }
 
+
 export function currencyFormat(amount: number) {
-    return '$' + (amount / 100).toFixed(2)
+    return '₱' + (amount / 100).toFixed(2)
 }
 
 export function filterEmptyValues(values: object) {
@@ -28,4 +41,23 @@ export function formatAddressString(address: ShippingAddress) {
 
 export function formatPaymentString(card: PaymentSummary) {
   return `${card?.brand?.toUpperCase()}, **** **** **** ${card?.last4}, Exp: ${card?.exp_month}/${card?.exp_year}`;
+}
+
+export function handleApiError<T extends FieldValues>(
+  error: unknown,
+  setError: UseFormSetError<T>,
+  fieldNames: Path<T>[]
+) {
+  const apiError = (error as {message?: string}) || {};
+
+  if (apiError.message && typeof apiError.message === 'string') {
+    const errorArray = apiError.message.split(',');
+
+    errorArray.forEach(element => {
+      const matchedField = fieldNames.find(fieldNames => 
+        element.toLowerCase().includes(fieldNames.toString().toLowerCase()));
+
+        if (matchedField) setError(matchedField, {message: element.trim()});
+    });
+  }
 }

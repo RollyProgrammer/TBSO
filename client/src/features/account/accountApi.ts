@@ -49,6 +49,7 @@ export const accountApi = createApi({
     userInfo: builder.query<User, void>({
       query: () => "account/user-info",
       providesTags: ["UserInfo"],
+      keepUnusedDataFor: 300,
     }),
     logout: builder.mutation({
       query: () => ({

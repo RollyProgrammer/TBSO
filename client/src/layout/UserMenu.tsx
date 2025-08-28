@@ -36,20 +36,18 @@ export default function UserMenu({ user }: Props) {
       {/* Hover dropdown */}
       <div className="group-hover:block hidden absolute right-0 pt-4 z-50 transition-all duration-150">
         <div className="flex flex-col gap-2 w-auto py-3 px-5 bg-slate-100 text-gray-500 rounded shadow-lg">
-          <Link
-            to="/profile"
-            onClick={handleClose}
-            className="hover:text-black"
-          >
+          <Link to="/profile" onClick={handleClose} className="hover:text-black">
             <span className="font-medium">{user.email}</span>
           </Link>
           <Link to="/orders" onClick={handleClose} className="hover:text-black">
             Orders
           </Link>
-          <p
-            onClick={logout}
-            className="cursor-pointer  text-red-500 hover:font-semibold"
-          >
+          {user.role.includes("Admin") && (
+            <Link to="/inventory" onClick={handleClose} className="hover:text-black">
+              Inventory
+            </Link>
+          )}
+          <p onClick={logout} className="cursor-pointer  text-red-500 hover:font-semibold">
             Logout
           </p>
         </div>

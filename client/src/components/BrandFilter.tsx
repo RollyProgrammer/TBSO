@@ -30,7 +30,7 @@ export default function BrandFilter({ brands, checked, onChange }: BrandFilterPr
             <input
               type="checkbox"
               value={item}
-              checked={checkedItem.includes(item)} // ✅ respects local toggling
+              checked={checkedItem.includes(item)}
               onChange={() => handleToggle(item)}
               className="accent-gray-600"
             />
