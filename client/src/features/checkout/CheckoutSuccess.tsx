@@ -10,7 +10,7 @@ export default function CheckoutSuccess() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6">
-      <h1 className="text-2xl font-bold mb-2">Thanks for your order!</h1>
+      <h1 className="text-2xl font-bold mb-2">Thank you for your order!</h1>
       <p className="text-gray-600 mb-6">
         Your order <strong>#{order.id}</strong> will be processed.
       </p>
@@ -42,7 +42,7 @@ export default function CheckoutSuccess() {
           View your order
         </Link>
 
-        <Link to="/catalog" className="px-4 py-2 border border-gray-400 text-gray-700 font-medium hover:bg-gray-100 transition">
+        <Link to="/collection" className="px-4 py-2 border border-gray-400 text-gray-700 font-medium hover:bg-gray-100 transition">
           Continue shopping
         </Link>
       </div>

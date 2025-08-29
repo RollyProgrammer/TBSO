@@ -31,7 +31,7 @@ export default function OurProducts() {
       </div>
 
       <div className="w-full mx-auto">
-        <ProductList products={products.slice(0, 12)} />
+        <ProductList products={products.slice(0, 6)} />
       </div>
     </section>
   );

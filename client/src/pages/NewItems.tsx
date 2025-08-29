@@ -1,8 +1,5 @@
 import ProductList from "../features/catalog/ProductList";
-import {
-  useFetchFiltersQuery,
-  useFetchProductsQuery,
-} from "../features/catalog/catalogApi";
+import { useFetchFiltersQuery, useFetchProductsQuery } from "../features/catalog/catalogApi";
 import { useAppDispatch, useAppSelector } from "../app/store/store";
 import Sorting from "../components/Sorting";
 import { setOrderBy, setPageNumber } from "../features/catalog/catalogSlice";
@@ -22,21 +19,12 @@ export default function BestSeller() {
   const { data: products, isLoading } = useFetchProductsQuery(productParams);
   const dispatch = useAppDispatch();
 
-  if (isLoading || !filtersData)
-    return (
-      <div className="flex justify-center items-center min-h-[60vh] text-gray-600 text-sm sm:text-base">
-        Loading New Items...
-      </div>
-    );
+  if (isLoading || !filtersData) return <div className="flex justify-center items-center min-h-[60vh] text-gray-600 text-sm sm:text-base">Loading New Items...</div>;
 
   return (
     <section className="py-15 sm:py-6">
       <div className="container mx-auto flex flex-wrap justify-between items-center gap-4 mb-6 px-4 sm:px-6 md:px-10">
-        <Sorting
-          options={sortOptions}
-          selectedValue={selectedSort}
-          onChange={(e) => dispatch(setOrderBy(e.target.value))}
-        />
+        <Sorting options={sortOptions} selectedValue={selectedSort} onChange={(e) => dispatch(setOrderBy(e.target.value))} />
       </div>
       {/* Main Content */}
       <div className="container mx-auto flex flex-col lg:flex-row gap-8 px-4 sm:px-6 md:px-10">
@@ -48,15 +36,10 @@ export default function BestSeller() {
           {products.items && products.items.length > 0 ? (
             <>
               <ProductList products={products.items} />
-              <AppPagination
-                metadata={products.pagination}
-                onPageChange={(page: number) => dispatch(setPageNumber(page))}
-              />
+              <AppPagination metadata={products.pagination} onPageChange={(page: number) => dispatch(setPageNumber(page))} />
             </>
           ) : (
-            <div className="flex justify-center items-center min-h-[60vh] text-gray-600 text-sm sm:text-base">
-              There are no results for this filter
-            </div>
+            <div className="flex justify-center items-center min-h-[60vh] text-gray-600 text-sm sm:text-base">There are no results for this filter</div>
           )}
         </div>
       </div>

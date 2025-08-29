@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Item } from "../../app/models/basket";
-import {
-  useAddbasketItemMutation,
-  useRemoveBasketItemMutation,
-} from "./basketApi";
+import { useAddbasketItemMutation, useRemoveBasketItemMutation } from "./basketApi";
 import { currencyFormat } from "../../lib/util";
 
 type Props = {
@@ -11,6 +8,7 @@ type Props = {
 };
 
 export default function BasketItem({ item }: Props) {
+  
   const [inputQuantity, setInputQuantity] = useState(item.quantity);
   const [addBasketItem] = useAddbasketItemMutation();
   const [removeBasketItem] = useRemoveBasketItemMutation();
@@ -29,18 +27,12 @@ export default function BasketItem({ item }: Props) {
   return (
     <div className="flex w-full p-2 border-b border-gray-300 relative">
       {/* Image */}
-      <img
-        src={item.pictureUrl}
-        alt={item.name}
-        className="w-32 h-32 sm:w-30 sm:h-30 object-cover"
-      />
+      <img src={item.pictureUrl} alt={item.name} className="w-32 h-32 sm:w-30 sm:h-30 object-cover" />
 
       {/* Text Content */}
       <div className="ml-4 flex flex-col flex-1">
         {/* Item Name */}
-        <h2 className="text-base sm:text-2xl font-semibold text-gray-800 mb-1 sm:mb-2">
-          {item.name}
-        </h2>
+        <h2 className="text-base sm:text-2xl font-semibold text-gray-800 mb-1 sm:mb-2">{item.name}</h2>
 
         {/* Quantity and Vendor Row */}
         <div className="flex justify-between text-gray-600">
@@ -62,9 +54,7 @@ export default function BasketItem({ item }: Props) {
 
         {/* Bottom: Price and Remove */}
         <div className="flex justify-between items-end mt-auto">
-          <p className="text-lg sm:text-2xl font-bold text-gray-700">
-            {currencyFormat(item.price * item.quantity)}
-          </p>
+          <p className="text-lg sm:text-2xl font-bold text-gray-700">{currencyFormat(item.price * item.quantity)}</p>
           <button
             onClick={() =>
               removeBasketItem({
@@ -78,9 +68,7 @@ export default function BasketItem({ item }: Props) {
             <span className="hidden sm:inline">Remove</span>
 
             {/* Icon for small screens */}
-            <span className="inline-flex sm:hidden items-center justify-center text-base leading-none w-full h-full">
-              ❌
-            </span>
+            <span className="inline-flex sm:hidden items-center justify-center text-base leading-none w-full h-full">❌</span>
           </button>
         </div>
       </div>

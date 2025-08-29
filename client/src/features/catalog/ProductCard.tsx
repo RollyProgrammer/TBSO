@@ -1,4 +1,3 @@
-import { Button, Card, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
 import type { Product } from "../../app/models/product";
 import { Link } from "react-router-dom";
 import { useAddbasketItemMutation } from "../basket/basketApi";
@@ -12,33 +11,28 @@ export default function ProductCard({ product }: Props) {
   const [addBasketItem, { isLoading }] = useAddbasketItemMutation();
 
   return (
-    <Card
-      elevation={3}
-      sx={{
-        width: 280,
-        borderRadius: 2,
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-      }}
-    >
-      <CardMedia sx={{ height: 240, backgroundSize: "cover" }} image={product.pictureUrl} title={product.name} />
-      <CardContent>
-        <Typography gutterBottom sx={{ textTransform: "uppercase" }} variant="subtitle2">
-          {product.name}
-        </Typography>
-        <Typography variant="h6" sx={{ color: "secondary.main" }}>
-          {currencyFormat(product.price)}
-        </Typography>
-      </CardContent>
-      <CardActions sx={{ justifyContent: "space-between" }}>
-        <Button disabled={isLoading} onClick={() => addBasketItem({ product, quantity: 1 })}>
-          Add to Cart
-        </Button>
-        <Button component={Link} to={`/catalog/${product.id}`}>
+    <div className="w-70 shadow-md flex flex-col justify-between bg-white">
+      {/* Image */}
+      <Link to={`/catalog/${product.id}`} className="block">
+        <div className="h-60 bg-cover bg-center hover:opacity-90 transition" style={{ backgroundImage: `url(${product.pictureUrl})` }} title={product.name} />
+      </Link>
+
+      {/* Content */}
+      <div className="p-4">
+        <h2 className="text-xs font-semibold uppercase mb-1">{product.name}</h2>
+        <p className="text-lg font-bold text-gray-600">{currencyFormat(product.price)}</p>
+      </div>
+
+      {/* Actions */}
+      <div className="flex justify-between px-4 pb-4">
+        <button disabled={isLoading} onClick={() => addBasketItem({ product, quantity: 1 })} className="px-3 py-2 text-sm font-medium bg-gray-900 text-white hover:bg-gray-700 transition">
+          {isLoading ? "Adding..." : "Add to Cart"}
+        </button>
+
+        <Link to={`/catalog/${product.id}`} className="px-3 py-2 text-sm font-medium border border-gray-600 text-gray-600 hover:bg-gray-50 transition">
           View
-        </Button>
-      </CardActions>
-    </Card>
+        </Link>
+      </div>
+    </div>
   );
 }

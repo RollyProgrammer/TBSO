@@ -1,11 +1,12 @@
 import { ArrowBack, ShoppingCart } from "@mui/icons-material";
 import { currencyFormat } from "../lib/util";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useBasket } from "../lib/hooks/useBasket";
 
 export default function OrderSummary() {
-  const {subtotal, deliveryFee} = useBasket();
+  const { subtotal, deliveryFee } = useBasket();
   const location = useLocation();
+  const navigate = useNavigate();
 
   return (
     <div className="w-full">
@@ -41,12 +42,10 @@ export default function OrderSummary() {
       </form>
 
       <div className="mt-4 text-center lg:text-left">
-        <Link to="/catalog" className="text-sm text-gray-600 hover:underline cursor-pointer inline-flex items-center gap-1 transition">
-          <p className="text-sm text-gray-600 hover:underline cursor-pointer inline-flex items-center gap-1 transition">
-            <ArrowBack fontSize="small" />
-            Back to Shopping
-          </p>
-        </Link>
+        <button onClick={() => navigate(-1)} className="text-sm text-gray-600 hover:underline cursor-pointer inline-flex items-center gap-1 transition">
+          <ArrowBack fontSize="small" />
+          Back to Shopping
+        </button>
       </div>
     </div>
   );

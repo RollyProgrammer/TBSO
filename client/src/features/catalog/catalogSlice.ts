@@ -3,7 +3,7 @@ import type { ProductParams } from "../../app/models/productParams";
 
 const initialState: ProductParams = {
   pageNumber: 1,
-  pageSize: 8,
+  pageSize: 20,
   types: [],
   brands: [],
   searchTerm: "",

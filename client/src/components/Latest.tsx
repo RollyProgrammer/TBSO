@@ -23,7 +23,7 @@ export default function LatestArrival() {
       </div>
 
       <div className="text-center mb-8">
-        <Link to="/latestarrival">
+        <Link to="/new">
           <button className="border-2 border-black text-black font-bold px-10 py-2 hover:bg-black hover:text-white transition duration-300">
             SEE ALL
           </button>
