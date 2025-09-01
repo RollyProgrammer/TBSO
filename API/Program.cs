@@ -11,10 +11,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("Cloudinary"));
 builder.Services.AddControllers();
+// builder.Services.AddDbContext<StoreContext>(options =>
+// {
+//     options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerDefaultConnection"));
+//     // options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+// });
+
 builder.Services.AddDbContext<StoreContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerDefaultConnection"));
-    // options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("RenderConnection"));
 });
 
 builder.Services.AddCors();
