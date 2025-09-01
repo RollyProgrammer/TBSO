@@ -23,7 +23,7 @@ public class PaymentsService(IConfiguration _configuration)
         {
             var options = new PaymentIntentCreateOptions
             {
-                Amount = (long)(subtotal + deliveryFee),
+                Amount = amount,
                 Currency = "usd",
                 PaymentMethodTypes = ["card"]
             };
@@ -33,7 +33,7 @@ public class PaymentsService(IConfiguration _configuration)
         {
             var options = new PaymentIntentUpdateOptions
             {
-                Amount = (long)(subtotal + deliveryFee)
+                Amount = amount
             };
             await service.UpdateAsync(basket.PaymentIntentId, options);
         }
