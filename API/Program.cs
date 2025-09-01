@@ -17,9 +17,15 @@ builder.Services.AddControllers();
 //     // options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 // });
 
+var connectionString = Environment.GetEnvironmentVariable("RenderConnection")
+                       ?? builder.Configuration.GetConnectionString("RenderConnection");
+
+if (string.IsNullOrEmpty(connectionString))
+    throw new InvalidOperationException("RenderConnection is not set.");
+
 builder.Services.AddDbContext<StoreContext>(options =>
 {
-    options.UseNpgsql(builder.Configuration.GetConnectionString("RenderConnection"));
+    options.UseNpgsql(connectionString);
 });
 
 builder.Services.AddCors();
