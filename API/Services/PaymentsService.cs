@@ -17,6 +17,7 @@ public class PaymentsService(IConfiguration _configuration)
         var subtotal = basket.Items.Sum(item => item.Quantity * item.Product.Price);
 
         var deliveryFee = subtotal > 1000 ? 0 : 50;
+        var amount = (long)((subtotal + deliveryFee) * 100); // Stripe expects cents
 
         if (string.IsNullOrEmpty(basket.PaymentIntentId))
         {

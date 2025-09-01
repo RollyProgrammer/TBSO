@@ -34,7 +34,7 @@ export default function InventoryPage() {
   if (editMode) return <ProductForm setEditMode={setEditMode} product={selectedProduct} refetch={refetch} setSelectedProduct={setSelectedProduct} />;
 
   return (
-    <main className="p-6">
+    <main className="pt-15 px-6 sm:p-6">
       {/* Header */}
       <header className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold text-gray-800">Inventory</h1>

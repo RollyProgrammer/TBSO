@@ -29,6 +29,44 @@ namespace API.Controllers
             return products;
         }
 
+        [HttpGet("newest")]
+        public async Task<ActionResult<PagedList<Product>>> GetNewest([FromQuery] ProductParams productParams)
+        {
+            var thirtyDaysAgo = DateTime.UtcNow.AddDays(-30);
+
+            var query = context.Products
+                .Where(p => p.CreatedAt >= thirtyDaysAgo)
+                .Sort(productParams.OrderBy)
+                .Search(productParams.SearchTerm)
+                .Filter(productParams.Brands, productParams.Types)
+                .AsQueryable();
+
+            var products = await PagedList<Product>.ToPageList(
+                query, productParams.PageNumber, productParams.PageSize);
+
+            Response.AddPaginationHeader(products.Metadata);
+
+            return products;
+        }
+
+        [HttpGet("bestsellers")]
+        public async Task<ActionResult<List<Product>>> GetBestSellers([FromQuery] ProductParams productParams)
+        {
+            var query = context.Products
+                .Sort(productParams.OrderBy)
+                .Search(productParams.SearchTerm)
+                .Filter(productParams.Brands, productParams.Types)
+                .AsQueryable();
+
+            var products = await PagedList<Product>.ToPageList(
+                query, productParams.PageNumber, productParams.PageSize);
+
+            Response.AddPaginationHeader(products.Metadata);
+
+            return products;
+        }
+
+
         [HttpGet("{id}")] // api/products/2
         public async Task<ActionResult<Product>> GetProduct(int id)
         {

@@ -6,6 +6,21 @@ import { currencyFormat, formatAddressString, formatPaymentString } from "../../
 export default function OrderDetailedPage() {
   const { id } = useParams();
   const { data: order, isLoading } = useFetchOrderDetailedQuery(+id!);
+  
+  const formatOrderStatus = (status: string) => {
+    switch (status) {
+      case "Pending":
+        return "Pending";
+      case "PaymentReceived":
+        return "Payment Received";
+      case "PaymentFailed":
+        return "Payment Failed";
+      case "PaymentMismatch":
+        return "Payment Mismatch";
+      default:
+        return status;
+    }
+  };
 
   if (isLoading) {
     return <div className="flex justify-center items-center min-h-[60vh] text-gray-600 text-sm sm:text-base">Loading Orders Page...</div>;
@@ -54,7 +69,7 @@ export default function OrderDetailedPage() {
 
           <dl>
             <dt className="font-medium text-gray-700">Order Status:</dt>
-            <dd className="text-gray-600">{order.orderStatus}</dd>
+            <dd className="text-gray-600">{formatOrderStatus(order.orderStatus)}</dd>
           </dl>
 
           <dl>

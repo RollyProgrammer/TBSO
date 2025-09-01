@@ -1,13 +1,6 @@
-// Hook to fetch orders from the API
 import { useFetchOrdersQuery } from "./orderApi";
-
-// React Router hook for navigation
 import { useNavigate } from "react-router-dom";
-
-// Utility to format dates
 import { format } from "date-fns";
-
-// Utility to format currency values
 import { currencyFormat } from "../../lib/util";
 
 export default function OrdersPage() {
@@ -16,6 +9,21 @@ export default function OrdersPage() {
 
   // Hook to programmatically navigate to another route
   const navigate = useNavigate();
+
+  const formatOrderStatus = (status: string) => {
+    switch (status) {
+      case "Pending":
+        return "Pending";
+      case "PaymentReceived":
+        return "Payment Received";
+      case "PaymentFailed":
+        return "Payment Failed";
+      case "PaymentMismatch":
+        return "Payment Mismatch";
+      default:
+        return status;
+    }
+  };
 
   // Show loading message while fetching data
   if (isLoading) {
@@ -63,7 +71,7 @@ export default function OrdersPage() {
                         order.orderStatus === "Completed" ? "bg-green-100 text-green-700" : order.orderStatus === "Pending" ? "bg-yellow-100 text-yellow-700" : "bg-gray-100 text-gray-600"
                       }`}
                     >
-                      {order.orderStatus}
+                      {formatOrderStatus(order.orderStatus)}
                     </span>
                   </td>
                 </tr>

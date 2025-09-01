@@ -9,7 +9,7 @@ export const catalogApi = createApi({
   reducerPath: "catalogApi",
   baseQuery: baseQueryWithErrorHandling,
   endpoints: (builder) => ({
-    fetchProducts: builder.query<{items: Product[], pagination: Pagination}, ProductParams>({
+    fetchProducts: builder.query<{ items: Product[]; pagination: Pagination }, ProductParams>({
       query: (productParams) => {
         return {
           url: "products",
@@ -17,10 +17,10 @@ export const catalogApi = createApi({
         };
       },
       transformResponse: (items: Product[], meta) => {
-        const paginationHeader = meta?.response.headers.get('Pagination');
+        const paginationHeader = meta?.response.headers.get("Pagination");
         const pagination = paginationHeader ? JSON.parse(paginationHeader) : null;
-        return {items, pagination}
-      }
+        return { items, pagination };
+      },
     }),
     fetchProductDetails: builder.query<Product, number>({
       query: (productId) => `products/${productId}`,
@@ -28,11 +28,29 @@ export const catalogApi = createApi({
     fetchFilters: builder.query<{ brands: string[]; types: string[] }, void>({
       query: () => "products/filters",
     }),
+    fetchNewestProducts: builder.query<{ items: Product[]; pagination: Pagination }, ProductParams>({
+      query: (productParams) => ({
+        url: "products/newest",
+        params: filterEmptyValues(productParams), // pagination, searchTerm, types, brands
+      }),
+      transformResponse: (items: Product[], meta) => {
+        const paginationHeader = meta?.response.headers.get("Pagination");
+        const pagination = paginationHeader ? JSON.parse(paginationHeader) : null;
+        return { items, pagination };
+      },
+    }),
+    fetchBestSellingProducts: builder.query<{ items: Product[]; pagination: Pagination }, ProductParams>({
+      query: (productParams) => ({
+        url: "products/bestselling",
+        params: filterEmptyValues(productParams),
+      }),
+      transformResponse: (items: Product[], meta) => {
+        const paginationHeader = meta?.response.headers.get("Pagination");
+        const pagination = paginationHeader ? JSON.parse(paginationHeader) : null;
+        return { items, pagination };
+      },
+    }),
   }),
 });
 
-export const {
-  useFetchProductDetailsQuery,
-  useFetchProductsQuery,
-  useFetchFiltersQuery,
-} = catalogApi;
+export const { useFetchProductDetailsQuery, useFetchProductsQuery, useFetchFiltersQuery, useFetchNewestProductsQuery, useFetchBestSellingProductsQuery } = catalogApi;

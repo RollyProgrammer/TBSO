@@ -1,7 +1,6 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import App from "../../layout/App";
 import HomePage from "../../features/home/Home";
-import Catalog from "../../features/catalog/Catalog";
 import ProductDetails from "../../features/catalog/ProductDetails";
 import ProductList from "../../features/catalog/ProductList";
 import AboutPage from "../../features/about/AboutPage";
@@ -43,9 +42,8 @@ export const router = createBrowserRouter([
       { path: "contactpage", element: <ContactPage /> },
       { path: "server-error", element: <ServerError /> },
       { path: "not-found", element: <NotFound /> },
-      { path: "catalog", element: <Catalog /> },
       { path: "catalog/:id", element: <ProductDetails /> },
-      { path: "productlist", element: <ProductList products={[]} /> },
+      { path: "productlist", element: <ProductList products={[]} cardWidth={""} /> },
       { path: "cart", element: <Cart /> },
       { path: "login", element: <Login /> },
       { path: "signup", element: <SignUp /> },

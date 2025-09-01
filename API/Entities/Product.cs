@@ -11,4 +11,7 @@ public class Product
     public required string Brand { get; set; }
     public int QuantityInStock { get; set; }
     public string? PublicId { get; set; }
+
+    public int UnitsSold { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

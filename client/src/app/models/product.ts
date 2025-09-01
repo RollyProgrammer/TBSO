@@ -7,4 +7,6 @@ export type Product = {
   type: string
   brand: string
   quantityInStock: number
+  unitSold: number
+  createdAt: string; // ISO date string from backend
 }

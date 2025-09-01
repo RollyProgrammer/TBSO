@@ -2,14 +2,15 @@ import { useFetchFiltersQuery } from "../features/catalog/catalogApi";
 import BrandFilter from "./BrandFilter";
 import Search from "./Search";
 import TypeFilter from "./TypeFilter";
-import {
-  resetParams,
-  setBrands,
-  setTypes,
-} from "../features/catalog/catalogSlice";
+import { resetParams, setBrands, setTypes } from "../features/catalog/catalogSlice";
 import { useAppDispatch, useAppSelector } from "../app/store/store";
 
-export default function Filters() {
+type FiltersProps = {
+  cardWidth: string;
+  setCardWidth: (width: string) => void;
+};
+
+export default function Filters({ cardWidth, setCardWidth }: FiltersProps) {
   const { data } = useFetchFiltersQuery();
   const { types, brands } = useAppSelector((state) => state.catalog);
   const dispatch = useAppDispatch();
@@ -30,20 +31,24 @@ export default function Filters() {
         </button>
       </div>
       <Search />
-      <div className="flex justify-between items-start gap-4 sm:flex-col flex-row">
+      <div className="flex justify-between items-start sm:flex-col flex-row">
+        {/* Card size filter */}
+        <div className="hidden sm:flex gap-2 mb-4">
+          <button className={`px-3 py-1 border ${cardWidth === "w-45" ? "bg-gray-200" : ""}`} onClick={() => setCardWidth("w-45")}>
+            S
+          </button>
+          <button className={`px-3 py-1 border ${cardWidth === "w-70" ? "bg-gray-200" : ""}`} onClick={() => setCardWidth("w-70")}>
+            M
+          </button>
+          <button className={`px-3.5 py-1 border ${cardWidth === "w-140" ? "bg-gray-200" : ""}`} onClick={() => setCardWidth("w-140")}>
+            L
+          </button>
+        </div>
         <div className="w-full sm:w-1/2 order-1 sm:order-none">
-          <BrandFilter
-            brands={data.brands}
-            checked={brands}
-            onChange={(items: string[]) => dispatch(setBrands(items))}
-          />
+          <BrandFilter brands={data.brands} checked={brands} onChange={(items: string[]) => dispatch(setBrands(items))} />
         </div>
         <div className="w-full sm:w-1/2 order-2 sm:order-none">
-          <TypeFilter
-            types={data.types}
-            checked={types}
-            onChange={(items: string[]) => dispatch(setTypes(items))}
-          />
+          <TypeFilter types={data.types} checked={types} onChange={(items: string[]) => dispatch(setTypes(items))} />
         </div>
       </div>
     </div>

@@ -99,7 +99,7 @@ export default function ProductForm({ setEditMode, product, refetch, setSelected
   };
 
   return (
-    <div className="max-w-5xl mx-auto bg-white shadow-md rounded-2xl p-8">
+    <div className="max-w-5xl mx-auto bg-white shadow-md rounded-2xl pt-15 pb-6 px-6 sm:p-6">
       <h2 className="text-2xl font-bold mb-2">PRODUCT DETAILS</h2>
       <hr />
 

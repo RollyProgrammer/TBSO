@@ -128,13 +128,11 @@ export default function ProductDetails() {
             </div>
 
             {/* Add to Cart Button */}
-            {/* Add to Basket Button */}
             <button className="w-full bg-black text-white py-3 text-sm hover:bg-gray-800 transition flex items-center justify-center gap-2 mb-2" disabled={adding} onClick={handleAddToBasket}>
               <AddShoppingCart />
               {adding ? "ADDING..." : "ADD TO BASKET"}
             </button>
 
-            {/* Buy Now Button */}
             {/* Buy Now Button */}
             <button
               className="w-full bg-black text-white py-3 text-sm hover:bg-gray-800 transition flex items-center justify-center gap-2 mb-5"
