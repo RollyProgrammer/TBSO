@@ -17,12 +17,9 @@ builder.Services.AddControllers();
 //     // options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 // });
 
-var connectionString = builder.Configuration.GetConnectionString("RenderConnection") 
-                       ?? Environment.GetEnvironmentVariable("RenderConnection");
-
 builder.Services.AddDbContext<StoreContext>(options =>
 {
-    options.UseNpgsql(connectionString);
+    options.UseNpgsql(builder.Configuration.GetConnectionString("RenderConnection"));
 });
 
 builder.Services.AddCors();
