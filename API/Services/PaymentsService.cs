@@ -1,42 +1,52 @@
-using System;
 using API.Entities;
 using Stripe;
 
-namespace API.Services;
-
-public class PaymentsService(IConfiguration _configuration)
+namespace API.Services
 {
-    public async Task<PaymentIntent> CreateOrUpdatePaymentIntent(Basket basket)
+    public class PaymentsService
     {
-        StripeConfiguration.ApiKey = _configuration["StripeSettings:SecretKey"];
+        private readonly string? _stripeSecretKey;
 
-        var service = new PaymentIntentService();
-
-        var intent = new PaymentIntent();
-
-        var subtotal = basket.Items.Sum(item => item.Quantity * item.Product.Price);
-
-        var deliveryFee = subtotal > 1000 ? 0 : 50;
-        var amount = (long)((subtotal + deliveryFee) * 100); // Stripe expects cents
-
-        if (string.IsNullOrEmpty(basket.PaymentIntentId))
+        public PaymentsService(IConfiguration configuration)
         {
-            var options = new PaymentIntentCreateOptions
-            {
-                Amount = amount,
-                Currency = "usd",
-                PaymentMethodTypes = ["card"]
-            };
-            intent = await service.CreateAsync(options);
+            // Get key from environment variable first, then appsettings
+            _stripeSecretKey = Environment.GetEnvironmentVariable("StripeSettings__SecretKey")
+                               ?? configuration["StripeSettings:SecretKey"];
+
+            StripeConfiguration.ApiKey = _stripeSecretKey;
         }
-        else
+
+        public async Task<PaymentIntent> CreateOrUpdatePaymentIntent(Basket basket)
         {
-            var options = new PaymentIntentUpdateOptions
+            var service = new PaymentIntentService();
+
+            var subtotal = basket.Items.Sum(item => item.Quantity * item.Product.Price);
+
+            var deliveryFee = subtotal > 1000 ? 0 : 50;
+            var amount = (long)((subtotal + deliveryFee) * 100); // Stripe expects cents
+
+            PaymentIntent intent;
+
+            if (string.IsNullOrEmpty(basket.PaymentIntentId))
             {
-                Amount = amount
-            };
-            await service.UpdateAsync(basket.PaymentIntentId, options);
+                var options = new PaymentIntentCreateOptions
+                {
+                    Amount = amount,
+                    Currency = "usd",
+                    PaymentMethodTypes = new List<string> { "card" }
+                };
+                intent = await service.CreateAsync(options);
+            }
+            else
+            {
+                var options = new PaymentIntentUpdateOptions
+                {
+                    Amount = amount
+                };
+                intent = await service.UpdateAsync(basket.PaymentIntentId, options);
+            }
+
+            return intent;
         }
-        return intent;
     }
 }
