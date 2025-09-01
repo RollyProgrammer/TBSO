@@ -1,52 +1,46 @@
+using System;
 using API.Entities;
 using Stripe;
 
-namespace API.Services
+namespace API.Services;
+
+public class PaymentsService
 {
-    public class PaymentsService
+    public PaymentsService(IConfiguration configuration)
     {
-        private readonly string? _stripeSecretKey;
+        var apiKey = configuration["StripeSettings:SecretKey"];
+        if (string.IsNullOrEmpty(apiKey))
+            throw new InvalidOperationException("Stripe Secret Key is missing.");
+        
+        StripeConfiguration.ApiKey = apiKey;
+    }
 
-        public PaymentsService(IConfiguration configuration)
+    public async Task<PaymentIntent> CreateOrUpdatePaymentIntent(Basket basket)
+    {
+        var service = new PaymentIntentService();
+
+        var subtotal = basket.Items.Sum(item => item.Quantity * item.Product.Price);
+        var deliveryFee = subtotal > 1000 ? 0 : 50;
+        var amount = (long)((subtotal + deliveryFee) * 100); // Stripe expects cents
+
+        if (string.IsNullOrEmpty(basket.PaymentIntentId))
         {
-            // Get key from environment variable first, then appsettings
-            _stripeSecretKey = Environment.GetEnvironmentVariable("StripeSettings__SecretKey")
-                               ?? configuration["StripeSettings:SecretKey"];
-
-            StripeConfiguration.ApiKey = _stripeSecretKey;
+            var options = new PaymentIntentCreateOptions
+            {
+                Amount = amount,
+                Currency = "usd",
+                PaymentMethodTypes = new List<string> { "card" }
+            };
+            return await service.CreateAsync(options);
         }
-
-        public async Task<PaymentIntent> CreateOrUpdatePaymentIntent(Basket basket)
+        else
         {
-            var service = new PaymentIntentService();
-
-            var subtotal = basket.Items.Sum(item => item.Quantity * item.Product.Price);
-
-            var deliveryFee = subtotal > 1000 ? 0 : 50;
-            var amount = (long)((subtotal + deliveryFee) * 100); // Stripe expects cents
-
-            PaymentIntent intent;
-
-            if (string.IsNullOrEmpty(basket.PaymentIntentId))
+            var options = new PaymentIntentUpdateOptions
             {
-                var options = new PaymentIntentCreateOptions
-                {
-                    Amount = amount,
-                    Currency = "usd",
-                    PaymentMethodTypes = new List<string> { "card" }
-                };
-                intent = await service.CreateAsync(options);
-            }
-            else
-            {
-                var options = new PaymentIntentUpdateOptions
-                {
-                    Amount = amount
-                };
-                intent = await service.UpdateAsync(basket.PaymentIntentId, options);
-            }
-
-            return intent;
+                Amount = amount
+            };
+            await service.UpdateAsync(basket.PaymentIntentId, options);
+            return await service.GetAsync(basket.PaymentIntentId); // Return updated intent
         }
     }
 }
