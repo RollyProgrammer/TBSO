@@ -17,9 +17,12 @@ builder.Services.AddControllers();
 //     // options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 // });
 
+var connectionString = builder.Configuration.GetConnectionString("RenderConnection") 
+                       ?? Environment.GetEnvironmentVariable("RenderConnection");
+
 builder.Services.AddDbContext<StoreContext>(options =>
 {
-    options.UseNpgsql(builder.Configuration.GetConnectionString("RenderConnection"));
+    options.UseNpgsql(connectionString);
 });
 
 builder.Services.AddCors();
@@ -57,6 +60,6 @@ app.MapControllers();
 app.MapGroup("api").MapIdentityApi<User>();
 app.MapFallbackToController("Index", "Fallback");
 
-await DbInitializer.InitDb(app);
+// await DbInitializer.InitDb(app);
 
 app.Run();
