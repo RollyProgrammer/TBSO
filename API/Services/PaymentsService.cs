@@ -21,7 +21,7 @@ public class PaymentsService
 
         var subtotal = basket.Items.Sum(item => item.Quantity * item.Product.Price);
         var deliveryFee = subtotal > 1000 ? 0 : 50;
-        var amount = (long)((subtotal + deliveryFee) * 100); // Stripe expects cents
+        var amount = (long)(subtotal + deliveryFee);
 
         if (string.IsNullOrEmpty(basket.PaymentIntentId))
         {
@@ -40,7 +40,7 @@ public class PaymentsService
                 Amount = amount
             };
             await service.UpdateAsync(basket.PaymentIntentId, options);
-            return await service.GetAsync(basket.PaymentIntentId); // Return updated intent
+            return await service.GetAsync(basket.PaymentIntentId);
         }
     }
 }

@@ -116,7 +116,6 @@ export const basketApi = createApi({
 
           if (isNewBasket) dispatch(basketApi.util.invalidateTags(["Basket"]));
 
-          // ✅ Redirect to cart after success
           window.location.href = "/cart";
         } catch (error) {
           console.log(error);

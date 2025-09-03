@@ -21,6 +21,7 @@ public class Basket
         {
             Items.Add(new BasketItem
             {
+                ProductId = product.Id,
                 Product = product,
                 Quantity = quantity
             });
@@ -33,7 +34,8 @@ public class Basket
 
     public void RemoveItem(int productId, int quantity)
     {
-        if (quantity <= 0) throw new ArgumentException("Qyantity should be grater than zero", nameof(quantity));
+        if (quantity <= 0)
+            throw new ArgumentException("Quantity should be greater than zero", nameof(quantity));
 
         var item = FindItem(productId);
         if (item == null) return;
@@ -42,8 +44,7 @@ public class Basket
         if (item.Quantity <= 0) Items.Remove(item);
     }
 
-    private BasketItem? FindItem(int productId)
-    {
-        return Items.FirstOrDefault(item => item.ProductId == productId);
-    }
+    private BasketItem? FindItem(int productId) => Items.FirstOrDefault(item => item.ProductId == productId);
+
+    public decimal GetSubtotal() => Items.Sum(item => item.Quantity * item.Product.Price);
 }

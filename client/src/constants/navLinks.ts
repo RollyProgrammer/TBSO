@@ -1,4 +1,3 @@
-// constants/navLinks.ts
 export const brandLink = { title: "The Bluesky Online", path: "/" };
 
 export const midLinks = [

@@ -6,7 +6,6 @@ export const useBasket = () => {
   const [clearBasket] = useClearBasketMutation();
 
   const subtotal = basket?.items.reduce((sum: number, item: Item) => sum + item.quantity * item.price, 0) ?? 0;
-  // const deliveryFee = subtotal > 100000 ? 0 : 50;
    const deliveryFee = subtotal > 10000 ? 0 : 500;
   const total = subtotal + deliveryFee;
 

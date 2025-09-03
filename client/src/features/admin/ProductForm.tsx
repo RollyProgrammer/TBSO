@@ -1,28 +1,16 @@
-// React Hook Form for managing form state
 import { useForm } from "react-hook-form";
-
-// Zod schema and types for product validation
 import { createProductSchema, type CreateProductSchema } from "../../lib/schemas/createProductSchema";
-
-// Hookform resolver to integrate Zod with React Hook Form
 import { zodResolver } from "@hookform/resolvers/zod";
-
-// Custom input components
 import AppTextInput from "../../components/AppTextInput";
 import AppSelectInput from "../../components/AppSelectInput";
 import AppDropZone from "../../components/AppDropZone";
-
-// API hooks and types
 import { useFetchFiltersQuery } from "../catalog/catalogApi";
 import { useCreateProductMutation, useUpdateProductMutation } from "./adminApi";
 import { handleApiError } from "../../lib/util";
 import type z from "zod";
 import type { Product } from "../../app/models/product";
-
-// React hook
 import { useEffect } from "react";
 
-// Props expected by the ProductForm component
 type Props = {
   setEditMode: (value: boolean) => void;
   product: Product | null;
@@ -31,7 +19,7 @@ type Props = {
 };
 
 export default function ProductForm({ setEditMode, product, refetch, setSelectedProduct }: Props) {
-  // Initialize form with Zod schema validation
+
   const {
     control,
     handleSubmit,
@@ -40,35 +28,29 @@ export default function ProductForm({ setEditMode, product, refetch, setSelected
     setError,
     formState: { isSubmitting },
   } = useForm<
-    z.input<typeof createProductSchema>, // Type before Zod transformation
+    z.input<typeof createProductSchema>,
     unknown,
-    z.output<typeof createProductSchema> // Type after Zod transformation
+    z.output<typeof createProductSchema>
   >({
     mode: "onTouched",
     resolver: zodResolver(createProductSchema),
   });
 
-  // Watch the file input for preview cleanup
   const watchFile = watch("file");
 
-  // Fetch dropdown filter options (brands, types)
   const { data } = useFetchFiltersQuery();
 
-  // Mutation hooks for creating or updating a product
   const [createProduct] = useCreateProductMutation();
   const [updateProduct] = useUpdateProductMutation();
 
-  // Reset form when editing an existing product
   useEffect(() => {
     if (product) reset(product);
 
-    // Cleanup preview URL to avoid memory leaks
     return () => {
       if (watchFile) URL.revokeObjectURL((watchFile as File & { preview: string }).preview);
     };
   }, [product, reset, watchFile]);
 
-  // Convert form data into FormData for file upload
   const createFormData = (items: CreateProductSchema) => {
     const formData = new FormData();
     for (const key in items) {
@@ -77,17 +59,14 @@ export default function ProductForm({ setEditMode, product, refetch, setSelected
     return formData;
   };
 
-  // Submit handler for creating or updating product
   const onSubmit = async (data: CreateProductSchema) => {
     try {
       const formData = createFormData(data);
       if (watchFile) formData.append("file", watchFile);
 
-      // Update if editing, otherwise create new product
       if (product) await updateProduct({ id: product.id, data: formData }).unwrap();
       else await createProduct(formData).unwrap();
 
-      // Reset UI state
       setEditMode(false);
       setSelectedProduct(null);
       refetch();

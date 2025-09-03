@@ -1,32 +1,6 @@
 import type { FieldValues, Path, UseFormSetError } from "react-hook-form";
 import type { PaymentSummary, ShippingAddress } from "../app/models/order";
 
-// export function currencyFormat(amount: number | string | null | undefined): string {
-//   const num = Number(amount);
-//   if (isNaN(num)) return "";
-
-//   const hasCents = num % 1 !== 0; // true if there's a fractional part
-
-  // return num.toLocaleString("en-PH", {
-  //   style: "currency",
-  //   currency: "PHP",
-  //   minimumFractionDigits: hasCents ? 2 : 0,
-  //   maximumFractionDigits: 2,
-  // });
-// }
-
-// export function currencyFormat(amount: number) {
-  
-//   const hasCents = amount % 1 !== 0;
-//   return amount.toLocaleString("en-PH", {
-//     style: "currency",
-//     currency: "PHP",
-//     minimumFractionDigits: hasCents ? 2 : 0,
-//     maximumFractionDigits: 2,
-//   });
-// }
-
-
 export function currencyFormat(amount: number) {
     return '₱' + (amount / 100).toFixed(2)
 }

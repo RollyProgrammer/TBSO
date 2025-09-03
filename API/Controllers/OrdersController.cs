@@ -81,7 +81,6 @@ public class OrdersController(StoreContext context) : BaseApiController
 
     private object CalculateDeliveryFee(decimal subtotal)
     {
-        // return subtotal > 100000m ? 0m : 50m;
          return subtotal > 10000m ? 0m : 500m;
     }
 
