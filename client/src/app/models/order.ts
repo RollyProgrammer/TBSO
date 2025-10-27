@@ -1,6 +1,7 @@
 export interface Order {
   id: number
   buyerEmail: string
+  phone: string
   shippingAddress: ShippingAddress
   orderDate: string
   orderItems: OrderItem[]

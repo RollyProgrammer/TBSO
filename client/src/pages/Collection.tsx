@@ -21,13 +21,12 @@ export default function Collection() {
   const dispatch = useAppDispatch();
   const pageTitle = "Collections";
 
-  // cardWidth state lifted here
   const [cardWidth, setCardWidth] = useState("w-70");
 
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 640) {
-        setCardWidth("w-50"); // default for phones
+        setCardWidth("w-50"); 
       } else {
         setCardWidth("w-70"); // default for sm and up
       }

@@ -29,7 +29,7 @@ export default function OrderSummary() {
           </div>
           <div className="flex justify-between font-semibold text-lg pt-2">
             <dt>Total</dt>
-            <dd></dd>
+            <dd className="font-medium">{currencyFormat(subtotal + deliveryFee)}</dd>
           </div>
         </dl>
 

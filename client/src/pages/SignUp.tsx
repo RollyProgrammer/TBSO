@@ -57,42 +57,6 @@ export default function SignUp() {
           <h1 className="text-2xl sm:text-3xl lg:text-4xl uppercase font-bold mb-4 sm:mb-5">
             Sign Up
           </h1>
-          <p className="text-xl mb-5 text-gray-600">Sign up with</p>
-
-          {/* Third-party options (horizontal layout with logos) */}
-          <div className="flex items-center justify-center gap-4 mb-6 text-sm sm:text-base text-gray-700 flex-wrap">
-            <button className="flex items-center gap-2 border border-gray-300 py-2 px-4 rounded hover:bg-gray-100 transition">
-              <img
-                src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
-                alt="Google"
-                className="h-5 w-5"
-              />
-              Google
-            </button>
-            <button className="flex items-center gap-2 border border-gray-300 py-2 px-4 rounded hover:bg-gray-100 transition">
-              <img
-                src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg"
-                alt="Apple"
-                className="h-5 w-5"
-              />
-              Apple
-            </button>
-            <button className="flex items-center gap-2 border border-gray-300 py-2 px-4 rounded hover:bg-gray-100 transition">
-              <img
-                src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg"
-                alt="Facebook"
-                className="h-5 w-5"
-              />
-              Facebook
-            </button>
-          </div>
-
-          {/* OR Divider */}
-          <div className="flex items-center gap-4 my-6">
-            <hr className="flex-grow border-t border-gray-300" />
-            <span className="text-gray-500 text-sm font-medium">OR</span>
-            <hr className="flex-grow border-t border-gray-300" />
-          </div>
 
           {/* Sign Up Form */}
           <form

@@ -1,46 +1,110 @@
-using System;
-using API.Entities;
-using Stripe;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 
 namespace API.Services;
 
 public class PaymentsService
 {
-    public PaymentsService(IConfiguration configuration)
+    private readonly HttpClient _httpClient;
+    private readonly string _secretKey;
+
+    public PaymentsService(HttpClient httpClient, IConfiguration config)
     {
-        var apiKey = configuration["StripeSettings:SecretKey"];
-        if (string.IsNullOrEmpty(apiKey))
-            throw new InvalidOperationException("Stripe Secret Key is missing.");
-        
-        StripeConfiguration.ApiKey = apiKey;
+        _httpClient = httpClient;
+        _secretKey = config["PayMongoSettings:SecretKey"]
+                     ?? throw new ArgumentNullException("PayMongo secret key not found");
+
+        // Always include headers
+        _httpClient.DefaultRequestHeaders.Accept.Clear();
+        _httpClient.DefaultRequestHeaders.Accept.Add(
+            new MediaTypeWithQualityHeaderValue("application/json")
+        );
+
+        // Basic auth (secret key only)
+        var encoded = Convert.ToBase64String(Encoding.UTF8.GetBytes(_secretKey + ":"));
+        _httpClient.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Basic", encoded);
     }
 
-    public async Task<PaymentIntent> CreateOrUpdatePaymentIntent(Basket basket)
+    private async Task<string> PostAsync(string url, object body)
     {
-        var service = new PaymentIntentService();
+        var json = JsonSerializer.Serialize(body);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await _httpClient.PostAsync(url, content);
 
-        var subtotal = basket.Items.Sum(item => item.Quantity * item.Product.Price);
-        var deliveryFee = subtotal > 1000 ? 0 : 50;
-        var amount = (long)(subtotal + deliveryFee);
+        response.EnsureSuccessStatusCode();
 
-        if (string.IsNullOrEmpty(basket.PaymentIntentId))
+        return await response.Content.ReadAsStringAsync();
+    }
+
+    // 🔹 Create a Payment Intent
+    public async Task<string> CreatePaymentIntent(decimal amount, string description)
+    {
+        var body = new
         {
-            var options = new PaymentIntentCreateOptions
+            data = new
             {
-                Amount = amount,
-                Currency = "usd",
-                PaymentMethodTypes = new List<string> { "card" }
-            };
-            return await service.CreateAsync(options);
-        }
-        else
+                attributes = new
+                {
+                    amount = (long)amount,
+                    payment_method_allowed = new[] { "card", "gcash", "grab_pay", "paymaya" },
+                    payment_method_options = new
+                    {
+                        card = new { request_three_d_secure = "any" }
+                    },
+                    currency = "PHP",
+                    capture_type = "automatic",
+                    description,
+                    statement_descriptor = "My Shop"
+                }
+            }
+        };
+
+        return await PostAsync("https://api.paymongo.com/v1/payment_intents", body);
+    }
+
+    // 🔹 Create a Payment Method
+    public async Task<string> CreatePaymentMethod(string cardNumber, int expMonth, int expYear, string cvc, string name, string email, string phone)
+    {
+        var body = new
         {
-            var options = new PaymentIntentUpdateOptions
+            data = new
             {
-                Amount = amount
-            };
-            await service.UpdateAsync(basket.PaymentIntentId, options);
-            return await service.GetAsync(basket.PaymentIntentId);
-        }
+                attributes = new
+                {
+                    details = new
+                    {
+                        card_number = cardNumber,
+                        exp_month = expMonth,
+                        exp_year = expYear,
+                        cvc = cvc
+                    },
+                    billing = new { name, email, phone },
+                    type = "card"
+                }
+            }
+        };
+
+        return await PostAsync("https://api.paymongo.com/v1/payment_methods", body);
+    }
+
+    //  Attach Payment Method to Payment Intent
+    public async Task<string> AttachPaymentMethod(string intentId, string paymentMethodId, string returnUrl)
+    {
+        var body = new
+        {
+            data = new
+            {
+                attributes = new
+                {
+                    payment_method = paymentMethodId,
+                    return_url = returnUrl
+                }
+            }
+        };
+
+        return await PostAsync($"https://api.paymongo.com/v1/payment_intents/{intentId}/attach", body);
     }
 }

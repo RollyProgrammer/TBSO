@@ -58,13 +58,13 @@ export default function ProductDetails() {
           {/* Left: Product Images */}
           <div className="flex-1">
             <div className="w-full">
-              <img src={product.pictureUrl} alt={product.name} className="w-full h-auto shadow-md object-cover" />
+              <img src={product.pictureUrl} alt={product.name} className="w-full h-155 shadow-md object-cover" />
             </div>
 
             <div className="mt-4 flex gap-2">
               {[...Array(4)].map((_, i) => (
                 <div key={i} className="w-1/4">
-                  <img src={product.pictureUrl} alt={`${product.name}-${i}`} className="w-full h-auto shadow-md object-cover" />
+                  <img src={product.pictureUrl} alt={`${product.name}-${i}`} className="w-full h-40 shadow-md object-cover" />
                 </div>
               ))}
             </div>

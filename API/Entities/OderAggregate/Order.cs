@@ -1,5 +1,3 @@
-using System;
-
 namespace API.Entities.OderAggregate;
 
 public class Order

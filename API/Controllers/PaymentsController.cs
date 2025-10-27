@@ -1,132 +1,111 @@
-using System;
 using API.Data;
 using API.DTOs;
+using API.DTOs.Paymongo;
 using API.Entities.OderAggregate;
 using API.Extensions;
 using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Stripe;
 
 namespace API.Controllers;
 
-public class PaymentsController(PaymentsService paymentsService, StoreContext context, IConfiguration config, ILogger<PaymentsController> logger) : BaseApiController
+public class PaymentsController(PaymentsService paymentsService, StoreContext context) : BaseApiController
 {
     [Authorize]
-    [HttpPost]
+    [HttpPost("intent")]
     public async Task<ActionResult<BasketDto>> CreateOrUpdatePaymentIntent()
     {
         var basket = await context.Baskets.GetBasketWithItems(Request.Cookies["basketId"]);
-
+        
         if (basket == null) return BadRequest("Problem with the basket");
 
-        var intent = await paymentsService.CreateOrUpdatePaymentIntent(basket);
+        // create payment intent in PayMongo
+        var intentJson = await paymentsService.CreatePaymentIntent(
+            basket.Items.Sum(i => i.Quantity * i.Product.Price),
+            $"Basket {basket.Id}"
+        );
 
-        if (intent == null) return BadRequest("Problem creating payment intent");
+        var intent = System.Text.Json.JsonDocument.Parse(intentJson)
+            .RootElement.GetProperty("data");
 
-        basket.PaymentIntentId ??= intent.Id;
-        basket.ClientSecret ??= intent.ClientSecret;
+        var intentId = intent.GetProperty("id").GetString();
+        var clientKey = intent.GetProperty("attributes").GetProperty("client_key").GetString();
+
+        // store intent reference in basket
+        basket.PaymentIntentId ??= intentId;
+        basket.ClientSecret ??= clientKey;
 
         if (context.ChangeTracker.HasChanges())
         {
             var result = await context.SaveChangesAsync() > 0;
-
             if (!result) return BadRequest("Problem updating basket with intent");
         }
 
         return basket.ToDto();
     }
 
+    [AllowAnonymous]
     [HttpPost("webhook")]
-    public async Task<IActionResult> StripeWebhook()
+    public async Task<ActionResult> PaymongoWebhook([FromBody] PaymongoWebhookEvent webhook)
     {
-        var json = await new StreamReader(Request.Body).ReadToEndAsync();
-        try
-        {
-            var stripeEvent = ConstructStripeEvent(json);
+        if (webhook?.Data?.Attributes == null)
+            return BadRequest("Invalid webhook payload");
 
-            if (stripeEvent.Data.Object is not PaymentIntent intent)
-            {
-                return BadRequest("Invalid event data");
-            }
+        var eventType = webhook.Data.Attributes.Type;
+        var paymentIntentId = webhook.Data.Attributes.Data?.Attributes?.PaymentIntentId;
+        var status = webhook.Data.Attributes.Data?.Attributes?.Status;
 
-            if (intent.Status == "succeeded") await HandlePaymentIntentSucceeded(intent);
-            else await HandlePaymentIntentFailed(intent);
+        if (string.IsNullOrEmpty(paymentIntentId))
+            return BadRequest("Missing PaymentIntentId");
 
-            return Ok();
-        }
-        catch (StripeException ex)
-        {
-            logger.LogError(ex, "Stripe webhook error");
-            return StatusCode(StatusCodes.Status500InternalServerError, "webhook error");
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "An unexpected error has occured");
-            return StatusCode(StatusCodes.Status500InternalServerError, "Unexpected error");
-        }
-    }
-
-    private async Task HandlePaymentIntentFailed(PaymentIntent intent)
-    {
         var order = await context.Orders
-        .Include(x => x.OrderItems)
-        .FirstOrDefaultAsync(x => x.PaymentIntentId == intent.Id)
-        ?? throw new Exception("Order not found");
+            .FirstOrDefaultAsync(x => x.PaymentIntentId == paymentIntentId);
 
-        foreach (var item in order.OrderItems)
+        if (order == null) return NotFound();
+
+        switch (eventType)
         {
-            var productItem = await context.Products
-            .FindAsync(item.ItemOrdered.ProductId)
-                ?? throw new Exception("Problem updating order stock");
+            case "payment.paid" when status == "paid":
+                order.OrderStatus = OrderStatus.PaymentReceived;
+                break;
 
-            productItem.QuantityInStock += item.Quantity;
+            case "payment.failed":
+                order.OrderStatus = OrderStatus.PaymentFailed;
+                break;
+
+            default:
+                order.OrderStatus = OrderStatus.PaymentMismatch;
+                break;
         }
-
-        order.OrderStatus = OrderStatus.PaymentFailed;
 
         await context.SaveChangesAsync();
+        return Ok();
     }
 
-    private async Task HandlePaymentIntentSucceeded(PaymentIntent intent)
+    [Authorize]
+    [HttpPost("method")]
+    public async Task<IActionResult> CreatePaymentMethod()
     {
-        var order = await context.Orders
-            .Include(x => x.OrderItems)
-            .FirstOrDefaultAsync(x => x.PaymentIntentId == intent.Id)
-                ?? throw new Exception("Order not found");
+        // ⚠️ for demo only — in production, accept card details via frontend!
+        var result = await paymentsService.CreatePaymentMethod(
+            "4343434343434345", 12, 29, "123",
+            "Test", "test@test.com", "09123456789"
+        );
 
-        
-        if (order.GetTotal() != intent.Amount)
-        {
-            order.OrderStatus = OrderStatus.PaymentMismatch;
-        }
-        else
-        {
-            order.OrderStatus = OrderStatus.PaymentReceived;
-        }
-
-        var basket = await context.Baskets.FirstOrDefaultAsync(x => x.PaymentIntentId == intent.Id);
-
-        if (basket != null) context.Baskets.Remove(basket);
-
-        await context.SaveChangesAsync();
+        return Ok(result);
     }
 
-    private Event ConstructStripeEvent(string json)
+    [Authorize]
+    [HttpPost("attach")]
+    public async Task<IActionResult> AttachPaymentMethod([FromBody] AttachPaymentMethodDto dto)
     {
-        try
-        {
-            return EventUtility.ConstructEvent(
-                json,
-                Request.Headers["Stripe-Signature"],
-                config["StripeSettings:WhSecret"]
-            );
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Failed to construct stripe event");
-            throw new Exception("Invalid signature");
-        }
+        var result = await paymentsService.AttachPaymentMethod(
+            dto.IntentId,
+            dto.PaymentMethodId,
+            "https://localhost:3000/payment-result"
+        );
+        return Ok(result);
     }
+
 }

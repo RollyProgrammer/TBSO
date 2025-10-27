@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Data.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    [Migration("20250902064739_Naiwnaid")]
-    partial class Naiwnaid
+    [Migration("20250905055710_AttachPaymentMethod")]
+    partial class AttachPaymentMethod
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

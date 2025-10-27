@@ -20,19 +20,31 @@ import CheckoutSuccess from "../../features/checkout/CheckoutSuccess";
 import OrdersPage from "../../features/orders/OrdersPage";
 import OrderDetailedPage from "../../features/orders/OrderDetailedPage";
 import InventoryPage from "../../features/admin/InventoryPage";
+import SellerApp from "../../features/seller/SellerApp";
+import SellerDashboard from "../../features/seller/sellercomponents/SellerDashboard";
+import SellerProduct from "../../features/seller/sellercomponents/sellerproducts/SellerProduct";
+import SellerSalesOrder from "../../features/seller/sellercomponents/sellersalesorder/SellerSalesOrder";
+import SellerPromotions from "../../features/seller/sellercomponents/SellerPromotions";
+import SellerReports from "../../features/seller/sellercomponents/SellerReports";
+import SellerPaymentSetup from "../../features/seller/sellercomponents/SellerPaymentSetup";
+import SellerCourierSetup from "../../features/seller/sellercomponents/SellerCourierSetup";
+import SellerSalesCustomer from "../../features/seller/sellercomponents/sellersalesorder/SellerSalesCustomer";
+import SellerProductCategory from "../../features/seller/sellercomponents/sellerproducts/SellerProductCategory";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
     children: [
-      {element: <RequireAuth />, children: [
+      {
+        element: <RequireAuth />, children: [
           { path: "checkout", element: <CheckoutPage /> },
           { path: "checkout/success", element: <CheckoutSuccess /> },
           { path: "orders", element: <OrdersPage /> },
           { path: "orders/:id", element: <OrderDetailedPage /> },
           { path: "inventory", element: <InventoryPage /> },
-      ]},
+        ]
+      },
       { path: "/", element: <HomePage /> },
       { path: "new", element: <NewItems /> },
       { path: "best", element: <Best /> },
@@ -50,4 +62,21 @@ export const router = createBrowserRouter([
       { path: "/*", element: <Navigate replace to="/not-found" /> },
     ],
   },
+  {
+    path: "/seller",
+    element: <SellerApp />,
+    children: [
+      { index: true, element: <SellerDashboard /> },  // this will render at "/seller"
+      { path: "dashboard", element: <SellerDashboard /> },
+      { path: "products", element: <SellerProduct /> },
+      { path: "productcategory", element: <SellerProductCategory /> },
+      { path: "salesorder", element: <SellerSalesOrder /> },
+      { path: "salescustomer", element: <SellerSalesCustomer /> },
+      { path: "promotions", element: <SellerPromotions /> },
+      { path: "reports", element: <SellerReports /> },
+      { path: "paymentsetup", element: <SellerPaymentSetup /> },
+      { path: "couriersetup", element: <SellerCourierSetup /> },
+    ],
+  }
+
 ]);

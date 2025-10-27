@@ -11,26 +11,26 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("Cloudinary"));
 builder.Services.AddControllers();
-// builder.Services.AddDbContext<StoreContext>(options =>
-// {
-//     options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerDefaultConnection"));
-//     // options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-// });
-
-var connectionString = Environment.GetEnvironmentVariable("RenderConnection")
-                       ?? builder.Configuration.GetConnectionString("RenderConnection");
-
-if (string.IsNullOrEmpty(connectionString))
-    throw new InvalidOperationException("RenderConnection is not set.");
-
 builder.Services.AddDbContext<StoreContext>(options =>
 {
-    options.UseNpgsql(connectionString);
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerDefaultConnection"));
+    // options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+// var connectionString = Environment.GetEnvironmentVariable("RenderConnection")
+//                        ?? builder.Configuration.GetConnectionString("RenderConnection");
+
+// if (string.IsNullOrEmpty(connectionString))
+//     throw new InvalidOperationException("RenderConnection is not set.");
+
+// builder.Services.AddDbContext<StoreContext>(options =>
+// {
+//     options.UseNpgsql(connectionString);
+// });
 builder.Services.AddCors();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddTransient<ExceptionMiddleware>();
+builder.Services.AddHttpClient();
 builder.Services.AddScoped<PaymentsService>();
 builder.Services.AddScoped<ImageService>();
 builder.Services.AddIdentityApiEndpoints<User>(opt =>

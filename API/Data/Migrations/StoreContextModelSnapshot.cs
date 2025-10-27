@@ -60,7 +60,7 @@ namespace API.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Address");
+                    b.ToTable("Address", (string)null);
                 });
 
             modelBuilder.Entity("API.Entities.Basket", b =>
@@ -83,7 +83,7 @@ namespace API.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Baskets");
+                    b.ToTable("Baskets", (string)null);
                 });
 
             modelBuilder.Entity("API.Entities.BasketItem", b =>
@@ -109,7 +109,7 @@ namespace API.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("BasketItems");
+                    b.ToTable("BasketItems", (string)null);
                 });
 
             modelBuilder.Entity("API.Entities.OderAggregate.Order", b =>
@@ -145,7 +145,7 @@ namespace API.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("API.Entities.OderAggregate.OrderItem", b =>
@@ -169,7 +169,7 @@ namespace API.Data.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderItem");
+                    b.ToTable("OrderItem", (string)null);
                 });
 
             modelBuilder.Entity("API.Entities.Product", b =>
@@ -217,7 +217,7 @@ namespace API.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("API.Entities.User", b =>
@@ -458,7 +458,7 @@ namespace API.Data.Migrations
 
             modelBuilder.Entity("API.Entities.OderAggregate.Order", b =>
                 {
-                    b.OwnsOne("API.Entities.OderAggregate.PaymentSummary", "PaymentSummary", b1 =>
+                    b.OwnsOne("API.Entities.OderAggregate.Order.PaymentSummary#API.Entities.OderAggregate.PaymentSummary", "PaymentSummary", b1 =>
                         {
                             b1.Property<int>("OrderId")
                                 .HasColumnType("int");
@@ -480,13 +480,13 @@ namespace API.Data.Migrations
 
                             b1.HasKey("OrderId");
 
-                            b1.ToTable("Orders");
+                            b1.ToTable("Orders", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("OrderId");
                         });
 
-                    b.OwnsOne("API.Entities.OderAggregate.ShippingAddress", "ShippingAddress", b1 =>
+                    b.OwnsOne("API.Entities.OderAggregate.Order.ShippingAddress#API.Entities.OderAggregate.ShippingAddress", "ShippingAddress", b1 =>
                         {
                             b1.Property<int>("OrderId")
                                 .HasColumnType("int");
@@ -521,7 +521,7 @@ namespace API.Data.Migrations
 
                             b1.HasKey("OrderId");
 
-                            b1.ToTable("Orders");
+                            b1.ToTable("Orders", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("OrderId");
@@ -540,7 +540,7 @@ namespace API.Data.Migrations
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId");
 
-                    b.OwnsOne("API.Entities.OderAggregate.ProductItemOrdered", "ItemOrdered", b1 =>
+                    b.OwnsOne("API.Entities.OderAggregate.OrderItem.ItemOrdered#API.Entities.OderAggregate.ProductItemOrdered", "ItemOrdered", b1 =>
                         {
                             b1.Property<int>("OrderItemId")
                                 .HasColumnType("int");
@@ -558,7 +558,7 @@ namespace API.Data.Migrations
 
                             b1.HasKey("OrderItemId");
 
-                            b1.ToTable("OrderItem");
+                            b1.ToTable("OrderItem", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("OrderItemId");

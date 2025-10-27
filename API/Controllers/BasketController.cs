@@ -73,11 +73,18 @@ public class BasketController(StoreContext context) : BaseApiController
 
         return basket;
     }
-    private async Task<Basket?> RetrieveBasket()
+
+    private async Task<Basket?> RetrieveBasket(string? basketId = null)
     {
+        basketId ??= Request.Cookies["basketId"];
+
+        if (string.IsNullOrEmpty(basketId))
+            return null;
+
         return await context.Baskets
-        .Include(x => x.Items)
-        .ThenInclude(x => x.Product)
-        .FirstOrDefaultAsync(x => x.BasketId == Request.Cookies["basketId"]);
+            .Include(x => x.Items)
+            .ThenInclude(x => x.Product)
+            .FirstOrDefaultAsync(x => x.BasketId == basketId);
     }
+
 }

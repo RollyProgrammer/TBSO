@@ -4,6 +4,7 @@ using API.DTOs;
 using API.Entities;
 using API.Entities.OderAggregate;
 using API.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,6 +35,7 @@ public class OrdersController(StoreContext context) : BaseApiController
         return order;
     }
 
+    [AllowAnonymous]
     [HttpPost]
     public async Task<ActionResult<Order>> CreateOrder(CreateOrderDto orderDto)
     {
@@ -57,7 +59,8 @@ public class OrdersController(StoreContext context) : BaseApiController
             order = new Order
             {
                 OrderItems = items,
-                BuyerEmail = User.GetUsername(),
+                // BuyerEmail = User.GetUsername(),
+                BuyerEmail = "testuser@example.com",
                 ShippingAddress = orderDto.ShippingAddress,
                 DeliveryFee = (decimal)deliveryFee,
                 Subtotal = subtotal,
@@ -81,7 +84,7 @@ public class OrdersController(StoreContext context) : BaseApiController
 
     private object CalculateDeliveryFee(decimal subtotal)
     {
-         return subtotal > 10000m ? 0m : 500m;
+        return subtotal > 10000m ? 0m : 500m;
     }
 
     private List<OrderItem>? CreatedOrderItems(List<BasketItem> items)
