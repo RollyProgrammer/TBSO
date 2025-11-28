@@ -1,39 +1,42 @@
-import { ArrowForward } from "@mui/icons-material";
-import { Link } from "react-router-dom";
-import { useRegisterMutation } from "../features/account/accountApi";
-import {
-  registerSchema,
-  type RegisterSchema,
-} from "../lib/schemas/registerSchema";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+// Import icons, routing, API hooks, and form utilities
+import { ArrowForward } from "@mui/icons-material"; // Icon for button
+import { Link } from "react-router-dom"; // For navigation links
+import { useRegisterMutation } from "../features/account/accountApi"; // API hook to register user
+import { registerSchema, type RegisterSchema } from "../lib/schemas/registerSchema"; // Zod validation schema
+import { useForm } from "react-hook-form"; // React Hook Form
+import { zodResolver } from "@hookform/resolvers/zod"; // Zod resolver for RHF
 
 export default function SignUp() {
+  // RTK Query mutation for user registration
   const [registerUser] = useRegisterMutation();
+
+  // Setup React Hook Form with Zod schema validation
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors, isValid, isLoading },
   } = useForm<RegisterSchema>({
-    mode: 'onTouched',
+    mode: "onTouched",
     resolver: zodResolver(registerSchema),
   });
 
+  // Form submission handler
   const onSubmit = async (data: RegisterSchema) => {
     try {
+      // Attempt to register user
       await registerUser(data).unwrap();
     } catch (error) {
+      // Handle API errors
       const apiError = error as { message: string };
-      if (apiError.message && typeof apiError.message === 'string') {
+      if (apiError.message && typeof apiError.message === "string") {
         const errorArray = apiError.message.split(",");
-        
+
         errorArray.forEach((e) => {
-          if (e.includes('Password')) {
-            setError('password', { message: e });
-          }
-          else if (e.includes('Email')) {
-            setError('email', { message: e });
+          if (e.includes("Password")) {
+            setError("password", { message: e }); // Set password error
+          } else if (e.includes("Email")) {
+            setError("email", { message: e }); // Set email error
           }
         });
       }
@@ -63,10 +66,9 @@ export default function SignUp() {
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-4 mx-auto text-left"
           >
+            {/* First Name */}
             <div>
-              <label className="block text-sm font-medium mb-1">
-                First Name
-              </label>
+              <label className="block text-sm font-medium mb-1">First Name</label>
               <input
                 type="text"
                 required
@@ -75,10 +77,9 @@ export default function SignUp() {
               />
             </div>
 
+            {/* Last Name */}
             <div>
-              <label className="block text-sm font-medium mb-1">
-                Last Name
-              </label>
+              <label className="block text-sm font-medium mb-1">Last Name</label>
               <input
                 type="text"
                 required
@@ -87,6 +88,7 @@ export default function SignUp() {
               />
             </div>
 
+            {/* Email */}
             <div>
               <label className="block text-sm font-medium mb-1">Email</label>
               <input
@@ -95,19 +97,14 @@ export default function SignUp() {
                 placeholder="Email address"
                 {...register("email", { required: "Email is required" })}
                 className={`w-full px-4 py-3 border border-gray-300 outline-none focus:ring-2 focus:ring-black text-sm sm:text-base
-                    ${
-                      errors.email
-                        ? "border-red-500 focus:ring-red-500"
-                        : "border-gray-300 focus:ring-black"
-                    }`}
+                  ${errors.email ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-black"}`}
               />
               {errors.email && typeof errors.email.message === "string" && (
-                <p className="text-sm text-red-500 leading-none">
-                  {errors.email.message}
-                </p>
+                <p className="text-sm text-red-500 leading-none">{errors.email.message}</p>
               )}
             </div>
 
+            {/* Password */}
             <div>
               <label className="block text-sm font-medium mb-1">Password</label>
               <input
@@ -116,19 +113,14 @@ export default function SignUp() {
                 placeholder="Password"
                 {...register("password", { required: "Password is required" })}
                 className={`w-full px-4 py-3 border border-gray-300 outline-none focus:ring-2 focus:ring-black text-sm sm:text-base
-                  ${
-                    errors.password
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 focus:ring-black"
-                  }`}
+                  ${errors.password ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-black"}`}
               />
-              {errors.password &&
-                typeof errors.password.message === "string" && (
-                  <p className="text-sm text-red-500 leading-none">
-                    {errors.password.message}
-                  </p>
-                )}
+              {errors.password && typeof errors.password.message === "string" && (
+                <p className="text-sm text-red-500 leading-none">{errors.password.message}</p>
+              )}
             </div>
+
+            {/* Submit Button */}
             <button
               disabled={isLoading || !isValid}
               type="submit"
@@ -137,6 +129,7 @@ export default function SignUp() {
               Create Account <ArrowForward fontSize="small" />
             </button>
 
+            {/* Link to login */}
             <div className="flex items-center justify-end text-sm text-gray-600 space-x-1">
               <p className="leading-snug">Already have an account?</p>
               <Link

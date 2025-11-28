@@ -1,51 +1,73 @@
-using System;
 using API.RequestHelpers;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.Extensions.Options;
 
-namespace API.Services;
-
-public class ImageService
+namespace API.Services
 {
-    private readonly Cloudinary _cloudinary;
-
-    public ImageService(IOptions<CloudinarySettings> config)
+    /// <summary>
+    /// Provides functionality for uploading and deleting images using the Cloudinary service.
+    /// </summary>
+    public class ImageService
     {
-        var acc = new Account(
-            config.Value.CloudName,
-            config.Value.ApiKey,
-            config.Value.ApiSecret
-        );
-        _cloudinary = new Cloudinary(acc);
-    }
+        private readonly Cloudinary _cloudinary;
 
-    public async Task<ImageUploadResult> AddImageAsync(IFormFile file)
-    {
-        var uploadResult = new ImageUploadResult();
-
-        if (file.Length > 0)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ImageService"/> class
+        /// using Cloudinary configuration from dependency injection.
+        /// </summary>
+        /// <param name="config">Cloudinary API configuration containing the CloudName, ApiKey, and ApiSecret.</param>
+        public ImageService(IOptions<CloudinarySettings> config)
         {
-            using var stream = file.OpenReadStream();
-
-            var uploadParams = new ImageUploadParams
-            {
-                File = new FileDescription(file.FileName, stream),
-                Folder = "rs-course"
-            };
-
-            uploadResult = await _cloudinary.UploadAsync(uploadParams);
+            var acc = new Account(
+                config.Value.CloudName,
+                config.Value.ApiKey,
+                config.Value.ApiSecret
+            );
+            _cloudinary = new Cloudinary(acc);
         }
 
-        return uploadResult;
-    }
+        /// <summary>
+        /// Uploads an image file to Cloudinary asynchronously.
+        /// </summary>
+        /// <param name="file">The image file to upload, provided as an <see cref="IFormFile"/>.</param>
+        /// <returns>
+        /// An <see cref="ImageUploadResult"/> containing details about the uploaded image,
+        /// such as the public ID, URL, and upload status.
+        /// </returns>
+        public async Task<ImageUploadResult> AddImageAsync(IFormFile file)
+        {
+            var uploadResult = new ImageUploadResult();
 
-    public async Task<DeletionResult> DeleteImageAsync(string publicId)
-    {
-        var deleteParams = new DeletionParams(publicId);
+            // Proceed only if the file contains data
+            if (file.Length > 0)
+            {
+                using var stream = file.OpenReadStream();
 
-        var result = await _cloudinary.DestroyAsync(deleteParams);
+                var uploadParams = new ImageUploadParams
+                {
+                    File = new FileDescription(file.FileName, stream),
+                    Folder = "rs-course" // Target folder in Cloudinary
+                };
 
-        return result;
+                uploadResult = await _cloudinary.UploadAsync(uploadParams);
+            }
+
+            return uploadResult;
+        }
+
+        /// <summary>
+        /// Deletes an image from Cloudinary based on its public ID.
+        /// </summary>
+        /// <param name="publicId">The unique Cloudinary public ID of the image to be deleted.</param>
+        /// <returns>
+        /// A <see cref="DeletionResult"/> object indicating whether the deletion was successful.
+        /// </returns>
+        public async Task<DeletionResult> DeleteImageAsync(string publicId)
+        {
+            var deleteParams = new DeletionParams(publicId);
+            var result = await _cloudinary.DestroyAsync(deleteParams);
+            return result;
+        }
     }
 }

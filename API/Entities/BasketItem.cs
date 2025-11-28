@@ -1,17 +1,43 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace API.Entities;
-
-[Table("BasketItems")]
-public class BasketItem
+namespace API.Entities
 {
-    public int Id { get; set; }
-    public int Quantity { get; set; }
+    /// <summary>
+    /// Represents a specific product entry within a user's basket.
+    /// Each BasketItem links a product to a basket along with its quantity.
+    /// </summary>
+    [Table("BasketItems")]
+    public class BasketItem
+    {
+        /// <summary>
+        /// Primary key for the basket item.
+        /// </summary>
+        public int Id { get; set; }
 
-    // navigation properties
-    public int ProductId { get; set; }
-    public required Product Product { get; set; }
+        /// <summary>
+        /// The quantity of the product in the basket.
+        /// </summary>
+        public int Quantity { get; set; }
 
-    public int BasketId { get; set; }
-    public Basket Basket { get; set; } = null!;
+        /// <summary>
+        /// Foreign key referencing the associated product.
+        /// </summary>
+        public int ProductId { get; set; }
+
+        /// <summary>
+        /// Navigation property representing the product linked to this basket item.
+        /// </summary>
+        public required Product Product { get; set; }
+
+        /// <summary>
+        /// Foreign key referencing the basket that owns this item.
+        /// </summary>
+        public int BasketId { get; set; }
+
+        /// <summary>
+        /// Navigation property representing the basket that this item belongs to.
+        /// Initialized with a non-null value to satisfy nullable reference type requirements.
+        /// </summary>
+        public Basket Basket { get; set; } = null!;
+    }
 }

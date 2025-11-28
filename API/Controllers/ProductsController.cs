@@ -22,7 +22,7 @@ namespace API.Controllers
                 .Filter(productParams.Brands, productParams.Types)
                 .AsQueryable();
 
-            var products = await PagedList<Product>.ToPageList(query, productParams.PageNumber, productParams.PageSize);
+            var products = await PagedList<Product>.ToPagedList(query, productParams.PageNumber, productParams.PageSize);
 
             Response.AddPaginationHeader(products.Metadata);
 
@@ -41,7 +41,7 @@ namespace API.Controllers
                 .Filter(productParams.Brands, productParams.Types)
                 .AsQueryable();
 
-            var products = await PagedList<Product>.ToPageList(
+            var products = await PagedList<Product>.ToPagedList(
                 query, productParams.PageNumber, productParams.PageSize);
 
             Response.AddPaginationHeader(products.Metadata);
@@ -58,7 +58,7 @@ namespace API.Controllers
                 .Filter(productParams.Brands, productParams.Types)
                 .AsQueryable();
 
-            var products = await PagedList<Product>.ToPageList(
+            var products = await PagedList<Product>.ToPagedList(
                 query, productParams.PageNumber, productParams.PageSize);
 
             Response.AddPaginationHeader(products.Metadata);
